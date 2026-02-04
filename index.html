@@ -1,859 +1,843 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2575.7">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Tap-Together Challenge</title>
+  <style>
+    :root{
+      --bg:#0b0e14;
+      --card:#0f1522;
+      --text:#eaf0ff;
+      --muted:rgba(234,240,255,.72);
+      --accent:#ff3b7a;
+      --accent2:#ff7aa9;
+      --good:#35d07f;
+      --warn:#ffcc66;
+      --bad:#ff5c5c;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      background:
+        radial-gradient(1200px 800px at 50% 0%, rgba(255,59,122,.18), transparent 60%),
+        radial-gradient(900px 700px at 80% 80%, rgba(255,204,102,.10), transparent 55%),
+        var(--bg);
+      color:var(--text);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      overflow:hidden;
+    }
+
+    .wrap{
+      height:100%;
+      display:grid;
+      place-items:center;
+      padding:18px;
+    }
+
+    .panel{
+      width:min(720px, 96vw);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:22px;
+      padding:18px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 18px 60px rgba(0,0,0,.45);
+      display:grid;
+      gap:14px;
+    }
+
+    .top{
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+
+    h1{
+      margin:0;
+      font-size:18px;
+      letter-spacing:.2px;
+      font-weight:750;
+    }
+    .sub{
+      margin:4px 0 0;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.35;
+    }
+
+    .controls{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+
+    .btn{
+      appearance:none;
+      border:1px solid rgba(255,255,255,.16);
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:14px;
+      font-weight:650;
+      font-size:13px;
+      cursor:pointer;
+      transition: transform .08s ease, background .15s ease, border-color .15s ease;
+      user-select:none;
+    }
+    .btn:hover{ background:rgba(255,255,255,.09); border-color:rgba(255,255,255,.22); }
+    .btn:active{ transform: translateY(1px) scale(.99); }
+    .btn.primary{
+      border-color: rgba(255,59,122,.45);
+      background: rgba(255,59,122,.14);
+    }
+
+    .row{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:14px;
+    }
+
+    .stage{
+      position:relative;
+      width:100%;
+      aspect-ratio: 16 / 9;
+      min-height: 340px;
+      border-radius:20px;
+      border:1px solid rgba(255,255,255,.10);
+      background:
+        radial-gradient(900px 500px at 50% 30%, rgba(255,59,122,.16), transparent 60%),
+        radial-gradient(700px 450px at 30% 80%, rgba(255,122,169,.10), transparent 60%),
+        rgba(10,14,22,.72);
+      overflow:hidden;
+      display:grid;
+      place-items:center;
+      padding:18px;
+      touch-action: manipulation;
+    }
+
+    .prompt{
+      position:absolute;
+      top:14px; left:14px; right:14px;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      pointer-events:none;
+    }
+
+    .pill{
+      pointer-events:none;
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color: var(--muted);
+      font-size:12px;
+    }
+
+    .stats{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+
+    .stat{
+      pointer-events:none;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      font-size:12px;
+      color: var(--muted);
+      white-space:nowrap;
+    }
+    .stat b{ color: var(--text); }
+
+    /* HEART */
+    .heartArea{
+      position:relative;
+      display:grid;
+      place-items:center;
+      width:min(320px, 56vw);
+      aspect-ratio:1/1;
+      user-select:none;
+      -webkit-user-select:none;
+    }
+
+    .heart{
+      font-size: clamp(84px, 14vw, 160px);
+      transform: translateZ(0) scale(1);
+      filter: drop-shadow(0 18px 35px rgba(255,59,122,.15));
+      transition: transform 120ms ease;
+      will-change: transform, filter;
+    }
+
+    .ring{
+      position:absolute;
+      width: 80%;
+      height: 80%;
+      border-radius: 999px;
+      border: 2px solid rgba(255,59,122,.0);
+      transform: scale(.6);
+      opacity: 0;
+      pointer-events:none;
+    }
+
+    .glowOn .heart{
+      filter:
+        drop-shadow(0 0 18px rgba(255,59,122,.65))
+        drop-shadow(0 0 44px rgba(255,122,169,.35));
+      animation: pulse 720ms ease-in-out both;
+    }
+
+    .glowOn .ring{
+      animation: ring 720ms ease-out both;
+    }
+
+    @keyframes pulse{
+      0%{ transform: scale(1); }
+      45%{ transform: scale(1.10); }
+      100%{ transform: scale(1.02); }
+    }
+    @keyframes ring{
+      0%{ opacity:0; transform: scale(.6); border-color: rgba(255,59,122,.0); }
+      30%{ opacity:1; border-color: rgba(255,59,122,.55); }
+      100%{ opacity:0; transform: scale(1.2); border-color: rgba(255,59,122,.0); }
+    }
+
+    .tapHint{
+      position:absolute;
+      bottom:14px;
+      left:14px;
+      right:14px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      color: var(--muted);
+      font-size:13px;
+    }
+
+    .bigTap{
+      pointer-events:auto;
+      border:none;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.12);
+      color:var(--text);
+      padding:12px 14px;
+      border-radius:16px;
+      font-weight:780;
+      cursor:pointer;
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+      transition: transform .08s ease, background .15s ease, border-color .15s ease;
+      user-select:none;
+    }
+    .bigTap:hover{ background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.20); }
+    .bigTap:active{ transform: translateY(1px) scale(.99); }
+
+    .feedback{
+      position:absolute;
+      inset:auto 0 54px 0;
+      display:grid;
+      place-items:center;
+      pointer-events:none;
+      font-weight:850;
+      letter-spacing:.3px;
+      text-shadow: 0 10px 40px rgba(0,0,0,.55);
+      opacity:0;
+      transform: translateY(8px);
+      transition: opacity .18s ease, transform .18s ease;
+    }
+    .feedback.show{
+      opacity:1;
+      transform: translateY(0);
+    }
+    .feedback small{
+      display:block;
+      font-weight:650;
+      color: var(--muted);
+      margin-top:6px;
+      letter-spacing:0;
+      text-align:center;
+    }
+
+    .meter{
+      height:10px;
+      border-radius:999px;
+      background: rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.10);
+      overflow:hidden;
+    }
+    .meter > i{
+      display:block;
+      height:100%;
+      width:0%;
+      background: linear-gradient(90deg, rgba(255,92,92,.95), rgba(255,204,102,.95), rgba(53,208,127,.95));
+      transition: width 180ms ease;
+    }
+
+    .bottom{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:10px;
+    }
+
+    .mini{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+
+    .codeBox{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 12px;
+      color: rgba(234,240,255,.86);
+      background: rgba(0,0,0,.25);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:14px;
+      padding:10px 12px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .codeBox span{ color: var(--muted); }
+    .codeBox input{
+      width: 260px;
+      max-width: 78vw;
+      border:none;
+      outline:none;
+      background:transparent;
+      color: var(--text);
+      font: inherit;
+    }
+
+    @media (max-width:520px){
+      .stage{ min-height: 420px; aspect-ratio: 10/16; }
+      .tapHint{ flex-direction:column; align-items:stretch; }
+      .bigTap{ justify-content:center; width:100%; }
+    }
   </style>
 </head>
 <body>
-<p class="p1">&lt;!doctype html&gt;</p>
-<p class="p1">&lt;html lang="en"&gt;</p>
-<p class="p1">&lt;head&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta charset="utf-8" /&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" /&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;title&gt;Tap-Together Challenge&lt;/title&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;style&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>:root{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>--bg:#0b0e14;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>--card:#0f1522;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>--text:#eaf0ff;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>--muted:rgba(234,240,255,.72);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>--accent:#ff3b7a;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>--accent2:#ff7aa9;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>--good:#35d07f;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>--warn:#ffcc66;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>--bad:#ff5c5c;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>*{box-sizing:border-box}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>html,body{height:100%}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>body{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>margin:0;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>background:</p>
-<p class="p1"><span class="Apple-converted-space">        </span>radial-gradient(1200px 800px at 50% 0%, rgba(255,59,122,.18), transparent 60%),</p>
-<p class="p1"><span class="Apple-converted-space">        </span>radial-gradient(900px 700px at 80% 80%, rgba(255,204,102,.10), transparent 55%),</p>
-<p class="p1"><span class="Apple-converted-space">        </span>var(--bg);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>color:var(--text);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>overflow:hidden;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.wrap{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>height:100%;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>display:grid;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>place-items:center;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>padding:18px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.panel{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>width:min(720px, 96vw);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border:1px solid rgba(255,255,255,.10);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border-radius:22px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>padding:18px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>backdrop-filter: blur(10px);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>box-shadow: 0 18px 60px rgba(0,0,0,.45);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>display:grid;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>gap:14px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.top{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>display:flex;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>gap:12px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>align-items:flex-start;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>justify-content:space-between;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>flex-wrap:wrap;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>h1{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>margin:0;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-size:18px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>letter-spacing:.2px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-weight:750;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.sub{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>margin:4px 0 0;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>color:var(--muted);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-size:13px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>line-height:1.35;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.controls{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>display:flex;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>gap:10px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>align-items:center;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>flex-wrap:wrap;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>justify-content:flex-end;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.btn{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>appearance:none;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border:1px solid rgba(255,255,255,.16);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>background:rgba(255,255,255,.06);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>color:var(--text);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>padding:10px 12px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border-radius:14px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-weight:650;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-size:13px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>cursor:pointer;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>transition: transform .08s ease, background .15s ease, border-color .15s ease;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>user-select:none;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.btn:hover{ background:rgba(255,255,255,.09); border-color:rgba(255,255,255,.22); }</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.btn:active{ transform: translateY(1px) scale(.99); }</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.btn.primary{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border-color: rgba(255,59,122,.45);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>background: rgba(255,59,122,.14);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.row{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>display:grid;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>grid-template-columns: 1fr;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>gap:14px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.stage{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>position:relative;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>width:100%;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>aspect-ratio: 16 / 9;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>min-height: 340px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border-radius:20px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border:1px solid rgba(255,255,255,.10);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>background:</p>
-<p class="p1"><span class="Apple-converted-space">        </span>radial-gradient(900px 500px at 50% 30%, rgba(255,59,122,.16), transparent 60%),</p>
-<p class="p1"><span class="Apple-converted-space">        </span>radial-gradient(700px 450px at 30% 80%, rgba(255,122,169,.10), transparent 60%),</p>
-<p class="p1"><span class="Apple-converted-space">        </span>rgba(10,14,22,.72);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>overflow:hidden;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>display:grid;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>place-items:center;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>padding:18px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>touch-action: manipulation;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.prompt{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>position:absolute;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>top:14px; left:14px; right:14px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>display:flex;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>align-items:flex-start;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>justify-content:space-between;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>gap:12px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>pointer-events:none;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.pill{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>pointer-events:none;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>display:inline-flex;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>gap:8px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>align-items:center;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>padding:8px 10px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border-radius:999px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border:1px solid rgba(255,255,255,.12);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>background: rgba(255,255,255,.06);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>color: var(--muted);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-size:12px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.stats{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>display:flex;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>gap:8px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>flex-wrap:wrap;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>justify-content:flex-end;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.stat{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>pointer-events:none;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>padding:8px 10px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border-radius:999px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border:1px solid rgba(255,255,255,.12);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>background: rgba(255,255,255,.06);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-size:12px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>color: var(--muted);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>white-space:nowrap;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.stat b{ color: var(--text); }</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>/* HEART */</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.heartArea{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>position:relative;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>display:grid;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>place-items:center;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>width:min(320px, 56vw);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>aspect-ratio:1/1;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>user-select:none;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>-webkit-user-select:none;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.heart{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-size: clamp(84px, 14vw, 160px);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>transform: translateZ(0) scale(1);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>filter: drop-shadow(0 18px 35px rgba(255,59,122,.15));</p>
-<p class="p1"><span class="Apple-converted-space">      </span>transition: transform 120ms ease;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>will-change: transform, filter;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.ring{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>position:absolute;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>width: 80%;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>height: 80%;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border-radius: 999px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border: 2px solid rgba(255,59,122,.0);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>transform: scale(.6);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>opacity: 0;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>pointer-events:none;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.glowOn .heart{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>filter:</p>
-<p class="p1"><span class="Apple-converted-space">        </span>drop-shadow(0 0 18px rgba(255,59,122,.65))</p>
-<p class="p1"><span class="Apple-converted-space">        </span>drop-shadow(0 0 44px rgba(255,122,169,.35));</p>
-<p class="p1"><span class="Apple-converted-space">      </span>animation: pulse 720ms ease-in-out both;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.glowOn .ring{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>animation: ring 720ms ease-out both;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>@keyframes pulse{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>0%{ transform: scale(1); }</p>
-<p class="p1"><span class="Apple-converted-space">      </span>45%{ transform: scale(1.10); }</p>
-<p class="p1"><span class="Apple-converted-space">      </span>100%{ transform: scale(1.02); }</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>@keyframes ring{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>0%{ opacity:0; transform: scale(.6); border-color: rgba(255,59,122,.0); }</p>
-<p class="p1"><span class="Apple-converted-space">      </span>30%{ opacity:1; border-color: rgba(255,59,122,.55); }</p>
-<p class="p1"><span class="Apple-converted-space">      </span>100%{ opacity:0; transform: scale(1.2); border-color: rgba(255,59,122,.0); }</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.tapHint{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>position:absolute;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>bottom:14px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>left:14px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>right:14px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>display:flex;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>align-items:center;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>justify-content:space-between;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>gap:10px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>color: var(--muted);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-size:13px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.bigTap{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>pointer-events:auto;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border:none;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>background: rgba(255,255,255,.06);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border:1px solid rgba(255,255,255,.12);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>color:var(--text);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>padding:12px 14px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border-radius:16px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-weight:780;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>cursor:pointer;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>display:inline-flex;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>gap:10px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>align-items:center;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>transition: transform .08s ease, background .15s ease, border-color .15s ease;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>user-select:none;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.bigTap:hover{ background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.20); }</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.bigTap:active{ transform: translateY(1px) scale(.99); }</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.feedback{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>position:absolute;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>inset:auto 0 54px 0;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>display:grid;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>place-items:center;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>pointer-events:none;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-weight:850;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>letter-spacing:.3px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>text-shadow: 0 10px 40px rgba(0,0,0,.55);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>opacity:0;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>transform: translateY(8px);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>transition: opacity .18s ease, transform .18s ease;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.feedback.show{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>opacity:1;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>transform: translateY(0);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.feedback small{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>display:block;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-weight:650;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>color: var(--muted);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>margin-top:6px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>letter-spacing:0;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>text-align:center;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.meter{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>height:10px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border-radius:999px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>background: rgba(255,255,255,.08);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border:1px solid rgba(255,255,255,.10);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>overflow:hidden;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.meter &gt; i{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>display:block;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>height:100%;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>width:0%;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>background: linear-gradient(90deg, rgba(255,92,92,.95), rgba(255,204,102,.95), rgba(53,208,127,.95));</p>
-<p class="p1"><span class="Apple-converted-space">      </span>transition: width 180ms ease;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.bottom{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>display:grid;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>grid-template-columns: 1fr;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>gap:10px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.mini{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>display:flex;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>gap:10px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>align-items:center;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>justify-content:space-between;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>flex-wrap:wrap;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>.codeBox{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-size: 12px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>color: rgba(234,240,255,.86);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>background: rgba(0,0,0,.25);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border:1px solid rgba(255,255,255,.10);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border-radius:14px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>padding:10px 12px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>display:flex;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>gap:10px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>align-items:center;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>flex-wrap:wrap;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.codeBox span{ color: var(--muted); }</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.codeBox input{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>width: 260px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>max-width: 78vw;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border:none;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>outline:none;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>background:transparent;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>color: var(--text);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font: inherit;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>@media (max-width:520px){</p>
-<p class="p1"><span class="Apple-converted-space">      </span>.stage{ min-height: 420px; aspect-ratio: 10/16; }</p>
-<p class="p1"><span class="Apple-converted-space">      </span>.tapHint{ flex-direction:column; align-items:stretch; }</p>
-<p class="p1"><span class="Apple-converted-space">      </span>.bigTap{ justify-content:center; width:100%; }</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/style&gt;</p>
-<p class="p1">&lt;/head&gt;</p>
-<p class="p1">&lt;body&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="wrap"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="panel"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="top"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;h1&gt;Tap-Together Challenge&lt;/h1&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;p class="sub"&gt;“When you see the heart glow, TAP ❤️” — the closer your tap is to the glow peak, the bigger the heart reaction.&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="controls"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;button class="btn" id="practiceBtn" title="Random glow timings on this device"&gt;Practice (Solo)&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;button class="btn primary" id="hostBtn" title="Generate a shared link so everyone’s glow timings match"&gt;Room Mode (Host)&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;button class="btn" id="joinBtn" title="Paste a Room Mode link to join"&gt;Join Link&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;button class="btn" id="resetBtn" title="Reset score &amp; streak"&gt;Reset&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="row"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="stage" id="stage" aria-label="Tap area"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="prompt"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="pill" id="modePill"&gt;Mode: &lt;b style="color:var(--text)"&gt;Practice&lt;/b&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="stats"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;div class="stat"&gt;Streak: &lt;b id="streak"&gt;0&lt;/b&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;div class="stat"&gt;Best: &lt;b id="best"&gt;0&lt;/b&gt;%&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;div class="stat"&gt;Last: &lt;b id="last"&gt;—&lt;/b&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="heartArea" id="heartArea"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="ring"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="heart" id="heart" role="img" aria-label="Heart"&gt;❤️&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="feedback" id="feedback"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div id="feedbackTitle"&gt;READY&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;small id="feedbackSub"&gt;Wait for the glow…&lt;/small&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="tapHint"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div style="flex:1; min-width:220px"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;div style="display:flex; justify-content:space-between; gap:10px; margin-bottom:8px;"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;span style="color:var(--muted); font-size:12px;"&gt;Sync meter&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;span style="color:var(--muted); font-size:12px;" id="windowLabel"&gt;±350ms window&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;div class="meter"&gt;&lt;i id="meterFill"&gt;&lt;/i&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;button class="bigTap" id="tapBtn"&gt;TAP ❤️&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="bottom"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="mini"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="codeBox" id="roomBox" style="display:none;"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;span&gt;Room link:&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;input id="roomLink" readonly /&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;button class="btn" id="copyLinkBtn"&gt;Copy&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="pill" id="nextPill"&gt;Next glow in: &lt;b style="color:var(--text)" id="nextIn"&gt;—&lt;/b&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;script&gt;</p>
-<p class="p1">(() =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>// ---------- Helpers ----------</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const $ = (id) =&gt; document.getElementById(id);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const clamp = (v, a, b) =&gt; Math.max(a, Math.min(b, v));</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>// Deterministic RNG (mulberry32)</p>
-<p class="p1"><span class="Apple-converted-space">  </span>function mulberry32(seed) {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>let t = seed &gt;&gt;&gt; 0;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>return function() {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>t += 0x6D2B79F5;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>let r = Math.imul(t ^ (t &gt;&gt;&gt; 15), 1 | t);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>r ^= r + Math.imul(r ^ (r &gt;&gt;&gt; 7), 61 | r);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>return ((r ^ (r &gt;&gt;&gt; 14)) &gt;&gt;&gt; 0) / 4294967296;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>};</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>function fmtMs(ms){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const sign = ms &lt; 0 ? "-" : "";</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const v = Math.abs(Math.round(ms));</p>
-<p class="p1"><span class="Apple-converted-space">    </span>return `${sign}${v}ms`;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>function haptic(pattern=[18]){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (navigator.vibrate) navigator.vibrate(pattern);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>// ---------- Elements ----------</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const stage = $("stage");</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const heartArea = $("heartArea");</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const heart = $("heart");</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const feedback = $("feedback");</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const feedbackTitle = $("feedbackTitle");</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const feedbackSub = $("feedbackSub");</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const meterFill = $("meterFill");</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const streakEl = $("streak");</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const bestEl = $("best");</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const lastEl = $("last");</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const nextInEl = $("nextIn");</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const windowLabel = $("windowLabel");</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>const practiceBtn = $("practiceBtn");</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const hostBtn = $("hostBtn");</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const joinBtn = $("joinBtn");</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const resetBtn = $("resetBtn");</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const tapBtn = $("tapBtn");</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>const modePill = $("modePill");</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const roomBox = $("roomBox");</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const roomLink = $("roomLink");</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const copyLinkBtn = $("copyLinkBtn");</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const nextPill = $("nextPill");</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>// ---------- Game Settings ----------</p>
-<p class="p1"><span class="Apple-converted-space">  </span>// Tap window around the glow "peak" (center). Smaller = harder.</p>
-<p class="p1"><span class="Apple-converted-space">  </span>let WINDOW_MS = 350;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>windowLabel.textContent = `±${WINDOW_MS}ms window`;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>// Glow scheduling:</p>
-<p class="p1"><span class="Apple-converted-space">  </span>// Practice: random between 1.6s–3.2s</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const PRACTICE_MIN = 1600;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const PRACTICE_MAX = 3200;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>// Room mode: deterministic schedule. Everyone must use same seed + start time.</p>
-<p class="p1"><span class="Apple-converted-space">  </span>// We'll create "beats" every 2.6s with small jitter so it feels alive.</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const ROOM_BEAT_MS = 2600;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const ROOM_JITTER_MS = 650; // deterministic jitter</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>// ---------- State ----------</p>
-<p class="p1"><span class="Apple-converted-space">  </span>let mode = "practice"; // "practice" | "room"</p>
-<p class="p1"><span class="Apple-converted-space">  </span>let rng = Math.random;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>let round = 0;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>let nextGlowAt = 0; <span class="Apple-converted-space">      </span>// performance.now() timestamp when glow PEAK happens</p>
-<p class="p1"><span class="Apple-converted-space">  </span>let glowStartAt = 0;<span class="Apple-converted-space">      </span>// start time for CSS class (before peak)</p>
-<p class="p1"><span class="Apple-converted-space">  </span>let acceptingTap = false;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>let lastTapAt = 0;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>let streak = 0;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>let best = 0;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>// Room params (when used)</p>
-<p class="p1"><span class="Apple-converted-space">  </span>let roomSeed = null;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>let roomStartEpoch = null; // Date.now() basis across devices</p>
-<p class="p1"><span class="Apple-converted-space">  </span>let roomStartPerf = null;<span class="Apple-converted-space">  </span>// performance.now at page load for mapping</p>
-<p class="p1"><span class="Apple-converted-space">  </span>let roomLinkUrl = null;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>// ---------- URL Parsing for Room Mode ----------</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const params = new URLSearchParams(location.search);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (params.has("seed") &amp;&amp; params.has("start")) {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const s = Number(params.get("seed"));</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const st = Number(params.get("start"));</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (Number.isFinite(s) &amp;&amp; Number.isFinite(st)) {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>roomSeed = s &gt;&gt;&gt; 0;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>roomStartEpoch = st;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>mode = "room";</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>function setMode(nextMode){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>mode = nextMode;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>const label = mode === "room" ? "Room Mode" : "Practice";</p>
-<p class="p1"><span class="Apple-converted-space">    </span>modePill.innerHTML = `Mode: &lt;b style="color:var(--text)"&gt;${label}&lt;/b&gt;`;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (mode === "room") {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>// Build deterministic RNG</p>
-<p class="p1"><span class="Apple-converted-space">      </span>if (roomSeed == null) roomSeed = (crypto.getRandomValues(new Uint32Array(1))[0]) &gt;&gt;&gt; 0;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>rng = mulberry32(roomSeed);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>roomBox.style.display = (roomLinkUrl ? "flex" : "none");</p>
-<p class="p1"><span class="Apple-converted-space">    </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>rng = Math.random;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>roomBox.style.display = "none";</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>resetRoundTimers();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>scheduleNextGlow();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>function resetScore(){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>streak = 0;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>best = 0;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>streakEl.textContent = "0";</p>
-<p class="p1"><span class="Apple-converted-space">    </span>bestEl.textContent = "0";</p>
-<p class="p1"><span class="Apple-converted-space">    </span>lastEl.textContent = "—";</p>
-<p class="p1"><span class="Apple-converted-space">    </span>meterFill.style.width = "0%";</p>
-<p class="p1"><span class="Apple-converted-space">    </span>showFeedback("READY", "Wait for the glow…", null);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>function resetRoundTimers(){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>round = 0;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>acceptingTap = false;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>nextGlowAt = 0;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>glowStartAt = 0;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>stage.classList.remove("glowOn");</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>// ---------- Glow Scheduling ----------</p>
-<p class="p1"><span class="Apple-converted-space">  </span>function scheduleNextGlow(){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>round++;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>const nowPerf = performance.now();</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (mode === "practice") {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const delay = Math.floor(PRACTICE_MIN + (PRACTICE_MAX - PRACTICE_MIN) * Math.random());</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const peak = nowPerf + delay;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>planGlow(peak);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>// ROOM MODE</p>
-<p class="p1"><span class="Apple-converted-space">      </span>// Everyone uses Date.now() to align around the shared "start" epoch.</p>
-<p class="p1"><span class="Apple-converted-space">      </span>// We'll compute the current beat index based on real time since roomStartEpoch.</p>
-<p class="p1"><span class="Apple-converted-space">      </span>// Then schedule the NEXT beat for this device.</p>
-<p class="p1"><span class="Apple-converted-space">      </span>if (roomStartPerf == null) roomStartPerf = performance.now();</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const nowEpoch = Date.now();</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>// If we joined early, wait until start</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const tSinceStart = nowEpoch - roomStartEpoch;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>const beatIndex = tSinceStart &lt; 0 ? 0 : Math.floor(tSinceStart / ROOM_BEAT_MS) + 1;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>// Deterministic jitter per beat</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const localRng = mulberry32((roomSeed ^ (beatIndex * 2654435761)) &gt;&gt;&gt; 0);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const jitter = (localRng() * 2 - 1) * ROOM_JITTER_MS; // [-jitter, +jitter]</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>const nextBeatEpoch = roomStartEpoch + beatIndex * ROOM_BEAT_MS + jitter;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>// Convert epoch target -&gt; perf timestamp target (best effort)</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const epochToPerfOffset = performance.now() - Date.now();</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const targetPerfPeak = nextBeatEpoch + epochToPerfOffset;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>planGlow(targetPerfPeak);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>function planGlow(peakPerf){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>// Start the glow effect slightly before peak so it visually ramps up.</p>
-<p class="p1"><span class="Apple-converted-space">    </span>// We'll start 220ms before peak.</p>
-<p class="p1"><span class="Apple-converted-space">    </span>glowStartAt = peakPerf - 220;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>nextGlowAt = peakPerf;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>// Update countdown pill</p>
-<p class="p1"><span class="Apple-converted-space">    </span>tickCountdown();</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>// Set timers</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const now = performance.now();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const startDelay = Math.max(0, glowStartAt - now);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const peakDelay = Math.max(0, nextGlowAt - now);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>setTimeout(() =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>stage.classList.add("glowOn");</p>
-<p class="p1"><span class="Apple-converted-space">      </span>acceptingTap = true;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>// If someone taps slightly early, still score within window.</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}, startDelay);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>setTimeout(() =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>// Peak moment: nudge feedback to "TAP!"</p>
-<p class="p1"><span class="Apple-converted-space">      </span>showFeedback("TAP!", "Hit it NOW ❤️", "accent");</p>
-<p class="p1"><span class="Apple-converted-space">      </span>haptic([12]);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>// Stop glow after animation completes</p>
-<p class="p1"><span class="Apple-converted-space">      </span>setTimeout(() =&gt; stage.classList.remove("glowOn"), 760);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>// Close window after +WINDOW_MS</p>
-<p class="p1"><span class="Apple-converted-space">      </span>setTimeout(() =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>if (acceptingTap) {</p>
-<p class="p1"><span class="Apple-converted-space">          </span>// Miss</p>
-<p class="p1"><span class="Apple-converted-space">          </span>acceptingTap = false;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>streak = 0;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>streakEl.textContent = String(streak);</p>
-<p class="p1"><span class="Apple-converted-space">          </span>lastEl.textContent = "Miss";</p>
-<p class="p1"><span class="Apple-converted-space">          </span>meterFill.style.width = "0%";</p>
-<p class="p1"><span class="Apple-converted-space">          </span>showFeedback("MISS", "Wait for the next glow.", "bad");</p>
-<p class="p1"><span class="Apple-converted-space">          </span>haptic([30, 40, 30]);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>// Schedule next round</p>
-<p class="p1"><span class="Apple-converted-space">        </span>scheduleNextGlow();</p>
-<p class="p1"><span class="Apple-converted-space">      </span>}, WINDOW_MS + 40);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}, peakDelay);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>function tickCountdown(){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const now = performance.now();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const ms = nextGlowAt ? Math.max(0, nextGlowAt - now) : 0;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>nextInEl.textContent = nextGlowAt ? `${Math.ceil(ms/100)/10}s` : "—";</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (nextGlowAt) requestAnimationFrame(tickCountdown);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>// ---------- Scoring ----------</p>
-<p class="p1"><span class="Apple-converted-space">  </span>function scoreTap(tapPerf){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const delta = tapPerf - nextGlowAt; <span class="Apple-converted-space">        </span>// negative = early</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const absDelta = Math.abs(delta);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>// Sync percent: 100 at perfect, 0 at window edge</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const raw = 1 - (absDelta / WINDOW_MS);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const sync = clamp(raw, 0, 1);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const pct = Math.round(sync * 100);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>// Visual reaction size</p>
-<p class="p1"><span class="Apple-converted-space">    </span>// Perfect -&gt; bigger scale, plus a little punch</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const scale = 1 + 0.35 * sync; // up to 1.35</p>
-<p class="p1"><span class="Apple-converted-space">    </span>heart.style.transform = `scale(${scale})`;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>setTimeout(() =&gt; heart.style.transform = "scale(1.02)", 120);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>// Meter</p>
-<p class="p1"><span class="Apple-converted-space">    </span>meterFill.style.width = `${pct}%`;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>// Streak &amp; best</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (pct &gt;= 60) streak++;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>else streak = 0;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>streakEl.textContent = String(streak);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (pct &gt; best) best = pct;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>bestEl.textContent = String(best);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>// Copy for feedback</p>
-<p class="p1"><span class="Apple-converted-space">    </span>let title = "OK";</p>
-<p class="p1"><span class="Apple-converted-space">    </span>let sub = `Δ ${fmtMs(delta)} • ${pct}% sync`;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>let tone = "warn";</p>
-<p class="p1"><span class="Apple-converted-space">    </span>let vibe = [16];</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (pct &gt;= 95) { title = "PERFECT"; tone="good"; vibe=[18, 25, 18]; }</p>
-<p class="p1"><span class="Apple-converted-space">    </span>else if (pct &gt;= 85) { title = "GREAT"; tone="good"; vibe=[18, 18]; }</p>
-<p class="p1"><span class="Apple-converted-space">    </span>else if (pct &gt;= 70) { title = "NICE"; tone="accent"; vibe=[14, 18]; }</p>
-<p class="p1"><span class="Apple-converted-space">    </span>else if (pct &gt;= 50) { title = "CLOSE"; tone="warn"; vibe=[12]; }</p>
-<p class="p1"><span class="Apple-converted-space">    </span>else { title = "OFF"; tone="bad"; vibe=[28]; }</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>lastEl.textContent = `${pct}%`;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>showFeedback(title, sub, tone);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>haptic(vibe);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>return { pct, delta };</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>function showFeedback(title, sub, tone){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>feedbackTitle.textContent = title;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>feedbackSub.textContent = sub;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>feedbackTitle.style.color =</p>
-<p class="p1"><span class="Apple-converted-space">      </span>tone === "good" ? "var(--good)" :</p>
-<p class="p1"><span class="Apple-converted-space">      </span>tone === "warn" ? "var(--warn)" :</p>
-<p class="p1"><span class="Apple-converted-space">      </span>tone === "bad" ? "var(--bad)" :</p>
-<p class="p1"><span class="Apple-converted-space">      </span>tone === "accent" ? "var(--accent2)" :</p>
-<p class="p1"><span class="Apple-converted-space">      </span>"var(--text)";</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>feedback.classList.add("show");</p>
-<p class="p1"><span class="Apple-converted-space">    </span>clearTimeout(showFeedback._t);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>showFeedback._t = setTimeout(() =&gt; feedback.classList.remove("show"), 900);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>// ---------- Input ----------</p>
-<p class="p1"><span class="Apple-converted-space">  </span>function onTap(){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const t = performance.now();</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>// Prevent double taps within 120ms</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (t - lastTapAt &lt; 120) return;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>lastTapAt = t;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>// Only score if within the window (early or late)</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const absDelta = Math.abs(t - nextGlowAt);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (!nextGlowAt) return;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (absDelta &lt;= WINDOW_MS) {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>acceptingTap = false;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>scoreTap(t);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>// Schedule next (slight delay so reaction feels satisfying)</p>
-<p class="p1"><span class="Apple-converted-space">      </span>setTimeout(() =&gt; scheduleNextGlow(), 260);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>// Tap outside window: tiny nudge feedback, but don’t kill the round</p>
-<p class="p1"><span class="Apple-converted-space">      </span>showFeedback("WAIT", "Hold… glow hasn’t peaked yet.", "warn");</p>
-<p class="p1"><span class="Apple-converted-space">      </span>haptic([8]);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>// Tap anywhere on stage</p>
-<p class="p1"><span class="Apple-converted-space">  </span>stage.addEventListener("pointerdown", (e) =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>// ignore clicks on controls area? (we want tap anywhere)</p>
-<p class="p1"><span class="Apple-converted-space">    </span>onTap();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}, {passive:true});</p>
-<p class="p1"><span class="Apple-converted-space">  </span>tapBtn.addEventListener("click", onTap);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>// Keyboard (for desktop testing)</p>
-<p class="p1"><span class="Apple-converted-space">  </span>window.addEventListener("keydown", (e) =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (e.code === "Space" || e.key.toLowerCase() === "t") {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>e.preventDefault();</p>
-<p class="p1"><span class="Apple-converted-space">      </span>onTap();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>});</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>// ---------- Room Mode: Host / Join ----------</p>
-<p class="p1"><span class="Apple-converted-space">  </span>function makeRoomLink(){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const seed = (crypto.getRandomValues(new Uint32Array(1))[0]) &gt;&gt;&gt; 0;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>// Start a few seconds in the future so everyone has time to open it</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const start = Date.now() + 6500;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>const url = new URL(location.href);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>url.searchParams.set("seed", String(seed));</p>
-<p class="p1"><span class="Apple-converted-space">    </span>url.searchParams.set("start", String(start));</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>roomSeed = seed;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>roomStartEpoch = start;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>roomLinkUrl = url.toString();</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>roomLink.value = roomLinkUrl;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>roomBox.style.display = "flex";</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>// Switch to room mode</p>
-<p class="p1"><span class="Apple-converted-space">    </span>setMode("room");</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>// Helpful feedback</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const startIn = Math.max(0, start - Date.now());</p>
-<p class="p1"><span class="Apple-converted-space">    </span>showFeedback("ROOM READY", `Starts in ${Math.ceil(startIn/100)/10}s • Share link now`, "accent");</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>function joinRoomLink(){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const link = prompt("Paste the Room Mode link here:");</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (!link) return;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>try{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const url = new URL(link);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const seed = Number(url.searchParams.get("seed"));</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const start = Number(url.searchParams.get("start"));</p>
-<p class="p1"><span class="Apple-converted-space">      </span>if (!Number.isFinite(seed) || !Number.isFinite(start)) throw new Error("Missing seed/start");</p>
-<p class="p1"><span class="Apple-converted-space">      </span>// Navigate to it so params apply cleanly</p>
-<p class="p1"><span class="Apple-converted-space">      </span>location.href = url.toString();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}catch(err){</p>
-<p class="p1"><span class="Apple-converted-space">      </span>alert("That link doesn’t look right. Make sure it includes ?seed=...&amp;start=...");</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>async function copyRoomLink(){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (!roomLink.value) return;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>try{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>await navigator.clipboard.writeText(roomLink.value);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>showFeedback("COPIED", "Send it to everyone in the room.", "good");</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}catch{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>// Fallback</p>
-<p class="p1"><span class="Apple-converted-space">      </span>roomLink.select();</p>
-<p class="p1"><span class="Apple-converted-space">      </span>document.execCommand("copy");</p>
-<p class="p1"><span class="Apple-converted-space">      </span>showFeedback("COPIED", "Send it to everyone in the room.", "good");</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>// Buttons</p>
-<p class="p1"><span class="Apple-converted-space">  </span>practiceBtn.addEventListener("click", () =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>// Clear room params</p>
-<p class="p1"><span class="Apple-converted-space">    </span>roomSeed = null;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>roomStartEpoch = null;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>roomStartPerf = null;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>roomLinkUrl = null;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const url = new URL(location.href);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>url.searchParams.delete("seed");</p>
-<p class="p1"><span class="Apple-converted-space">    </span>url.searchParams.delete("start");</p>
-<p class="p1"><span class="Apple-converted-space">    </span>history.replaceState({}, "", url.toString());</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>setMode("practice");</p>
-<p class="p1"><span class="Apple-converted-space">    </span>showFeedback("PRACTICE", "Random glow timings (solo).", "accent");</p>
-<p class="p1"><span class="Apple-converted-space">  </span>});</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>hostBtn.addEventListener("click", makeRoomLink);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>joinBtn.addEventListener("click", joinRoomLink);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>copyLinkBtn.addEventListener("click", copyRoomLink);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>resetBtn.addEventListener("click", () =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>resetScore();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>resetRoundTimers();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>scheduleNextGlow();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>});</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>// ---------- Init ----------</p>
-<p class="p1"><span class="Apple-converted-space">  </span>resetScore();</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (mode === "room") {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>// We are joining from URL</p>
-<p class="p1"><span class="Apple-converted-space">    </span>roomSeed = (Number(params.get("seed")) &gt;&gt;&gt; 0);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>roomStartEpoch = Number(params.get("start"));</p>
-<p class="p1"><span class="Apple-converted-space">    </span>roomLinkUrl = location.href;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>roomLink.value = roomLinkUrl;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>roomBox.style.display = "flex";</p>
-<p class="p1"><span class="Apple-converted-space">    </span>setMode("room");</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>const startIn = roomStartEpoch - Date.now();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (startIn &gt; 0) {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>showFeedback("JOINED ROOM", `Starts in ${Math.ceil(startIn/100)/10}s`, "accent");</p>
-<p class="p1"><span class="Apple-converted-space">    </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>showFeedback("JOINED ROOM", "Tap on the glow peak ❤️", "accent");</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>setMode("practice");</p>
-<p class="p1"><span class="Apple-converted-space">    </span>showFeedback("READY", "Wait for the glow…", null);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>// Safety: prevent iOS double-tap zoom on button-ish areas</p>
-<p class="p1"><span class="Apple-converted-space">  </span>let lastTouchEnd = 0;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.addEventListener("touchend", (e) =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const now = Date.now();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (now - lastTouchEnd &lt;= 250) e.preventDefault();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>lastTouchEnd = now;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}, { passive:false });</p>
-<p class="p2"><br></p>
-<p class="p1">})();</p>
-<p class="p1">&lt;/script&gt;</p>
-<p class="p1">&lt;/body&gt;</p>
-<p class="p1">&lt;/html&gt;</p>
+  <div class="wrap">
+    <div class="panel">
+      <div class="top">
+        <div>
+          <h1>Tap-Together Challenge</h1>
+          <p class="sub">“When you see the heart glow, TAP ❤️” — the closer your tap is to the glow peak, the bigger the heart reaction.</p>
+        </div>
+        <div class="controls">
+          <button class="btn" id="practiceBtn" title="Random glow timings on this device">Practice (Solo)</button>
+          <button class="btn primary" id="hostBtn" title="Generate a shared link so everyone’s glow timings match">Room Mode (Host)</button>
+          <button class="btn" id="joinBtn" title="Paste a Room Mode link to join">Join Link</button>
+          <button class="btn" id="resetBtn" title="Reset score & streak">Reset</button>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="stage" id="stage" aria-label="Tap area">
+          <div class="prompt">
+            <div class="pill" id="modePill">Mode: <b style="color:var(--text)">Practice</b></div>
+            <div class="stats">
+              <div class="stat">Streak: <b id="streak">0</b></div>
+              <div class="stat">Best: <b id="best">0</b>%</div>
+              <div class="stat">Last: <b id="last">—</b></div>
+            </div>
+          </div>
+
+          <div class="heartArea" id="heartArea">
+            <div class="ring"></div>
+            <div class="heart" id="heart" role="img" aria-label="Heart">❤️</div>
+          </div>
+
+          <div class="feedback" id="feedback">
+            <div id="feedbackTitle">READY</div>
+            <small id="feedbackSub">Wait for the glow…</small>
+          </div>
+
+          <div class="tapHint">
+            <div style="flex:1; min-width:220px">
+              <div style="display:flex; justify-content:space-between; gap:10px; margin-bottom:8px;">
+                <span style="color:var(--muted); font-size:12px;">Sync meter</span>
+                <span style="color:var(--muted); font-size:12px;" id="windowLabel">±350ms window</span>
+              </div>
+              <div class="meter"><i id="meterFill"></i></div>
+            </div>
+            <button class="bigTap" id="tapBtn">TAP ❤️</button>
+          </div>
+        </div>
+
+        <div class="bottom">
+          <div class="mini">
+            <div class="codeBox" id="roomBox" style="display:none;">
+              <span>Room link:</span>
+              <input id="roomLink" readonly />
+              <button class="btn" id="copyLinkBtn">Copy</button>
+            </div>
+            <div class="pill" id="nextPill">Next glow in: <b style="color:var(--text)" id="nextIn">—</b></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+(() => {
+  // ---------- Helpers ----------
+  const $ = (id) => document.getElementById(id);
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+
+  // Deterministic RNG (mulberry32)
+  function mulberry32(seed) {
+    let t = seed >>> 0;
+    return function() {
+      t += 0x6D2B79F5;
+      let r = Math.imul(t ^ (t >>> 15), 1 | t);
+      r ^= r + Math.imul(r ^ (r >>> 7), 61 | r);
+      return ((r ^ (r >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  function fmtMs(ms){
+    const sign = ms < 0 ? "-" : "";
+    const v = Math.abs(Math.round(ms));
+    return `${sign}${v}ms`;
+  }
+
+  function haptic(pattern=[18]){
+    if (navigator.vibrate) navigator.vibrate(pattern);
+  }
+
+  // ---------- Elements ----------
+  const stage = $("stage");
+  const heartArea = $("heartArea");
+  const heart = $("heart");
+  const feedback = $("feedback");
+  const feedbackTitle = $("feedbackTitle");
+  const feedbackSub = $("feedbackSub");
+  const meterFill = $("meterFill");
+  const streakEl = $("streak");
+  const bestEl = $("best");
+  const lastEl = $("last");
+  const nextInEl = $("nextIn");
+  const windowLabel = $("windowLabel");
+
+  const practiceBtn = $("practiceBtn");
+  const hostBtn = $("hostBtn");
+  const joinBtn = $("joinBtn");
+  const resetBtn = $("resetBtn");
+  const tapBtn = $("tapBtn");
+
+  const modePill = $("modePill");
+  const roomBox = $("roomBox");
+  const roomLink = $("roomLink");
+  const copyLinkBtn = $("copyLinkBtn");
+  const nextPill = $("nextPill");
+
+  // ---------- Game Settings ----------
+  // Tap window around the glow "peak" (center). Smaller = harder.
+  let WINDOW_MS = 350;
+  windowLabel.textContent = `±${WINDOW_MS}ms window`;
+
+  // Glow scheduling:
+  // Practice: random between 1.6s–3.2s
+  const PRACTICE_MIN = 1600;
+  const PRACTICE_MAX = 3200;
+
+  // Room mode: deterministic schedule. Everyone must use same seed + start time.
+  // We'll create "beats" every 2.6s with small jitter so it feels alive.
+  const ROOM_BEAT_MS = 2600;
+  const ROOM_JITTER_MS = 650; // deterministic jitter
+
+  // ---------- State ----------
+  let mode = "practice"; // "practice" | "room"
+  let rng = Math.random;
+
+  let round = 0;
+  let nextGlowAt = 0;       // performance.now() timestamp when glow PEAK happens
+  let glowStartAt = 0;      // start time for CSS class (before peak)
+  let acceptingTap = false;
+  let lastTapAt = 0;
+
+  let streak = 0;
+  let best = 0;
+
+  // Room params (when used)
+  let roomSeed = null;
+  let roomStartEpoch = null; // Date.now() basis across devices
+  let roomStartPerf = null;  // performance.now at page load for mapping
+  let roomLinkUrl = null;
+
+  // ---------- URL Parsing for Room Mode ----------
+  const params = new URLSearchParams(location.search);
+  if (params.has("seed") && params.has("start")) {
+    const s = Number(params.get("seed"));
+    const st = Number(params.get("start"));
+    if (Number.isFinite(s) && Number.isFinite(st)) {
+      roomSeed = s >>> 0;
+      roomStartEpoch = st;
+      mode = "room";
+    }
+  }
+
+  function setMode(nextMode){
+    mode = nextMode;
+
+    const label = mode === "room" ? "Room Mode" : "Practice";
+    modePill.innerHTML = `Mode: <b style="color:var(--text)">${label}</b>`;
+
+    if (mode === "room") {
+      // Build deterministic RNG
+      if (roomSeed == null) roomSeed = (crypto.getRandomValues(new Uint32Array(1))[0]) >>> 0;
+      rng = mulberry32(roomSeed);
+
+      roomBox.style.display = (roomLinkUrl ? "flex" : "none");
+    } else {
+      rng = Math.random;
+      roomBox.style.display = "none";
+    }
+
+    resetRoundTimers();
+    scheduleNextGlow();
+  }
+
+  function resetScore(){
+    streak = 0;
+    best = 0;
+    streakEl.textContent = "0";
+    bestEl.textContent = "0";
+    lastEl.textContent = "—";
+    meterFill.style.width = "0%";
+    showFeedback("READY", "Wait for the glow…", null);
+  }
+
+  function resetRoundTimers(){
+    round = 0;
+    acceptingTap = false;
+    nextGlowAt = 0;
+    glowStartAt = 0;
+    stage.classList.remove("glowOn");
+  }
+
+  // ---------- Glow Scheduling ----------
+  function scheduleNextGlow(){
+    round++;
+
+    const nowPerf = performance.now();
+
+    if (mode === "practice") {
+      const delay = Math.floor(PRACTICE_MIN + (PRACTICE_MAX - PRACTICE_MIN) * Math.random());
+      const peak = nowPerf + delay;
+      planGlow(peak);
+
+    } else {
+      // ROOM MODE
+      // Everyone uses Date.now() to align around the shared "start" epoch.
+      // We'll compute the current beat index based on real time since roomStartEpoch.
+      // Then schedule the NEXT beat for this device.
+      if (roomStartPerf == null) roomStartPerf = performance.now();
+      const nowEpoch = Date.now();
+
+      // If we joined early, wait until start
+      const tSinceStart = nowEpoch - roomStartEpoch;
+
+      const beatIndex = tSinceStart < 0 ? 0 : Math.floor(tSinceStart / ROOM_BEAT_MS) + 1;
+
+      // Deterministic jitter per beat
+      const localRng = mulberry32((roomSeed ^ (beatIndex * 2654435761)) >>> 0);
+      const jitter = (localRng() * 2 - 1) * ROOM_JITTER_MS; // [-jitter, +jitter]
+
+      const nextBeatEpoch = roomStartEpoch + beatIndex * ROOM_BEAT_MS + jitter;
+
+      // Convert epoch target -> perf timestamp target (best effort)
+      const epochToPerfOffset = performance.now() - Date.now();
+      const targetPerfPeak = nextBeatEpoch + epochToPerfOffset;
+
+      planGlow(targetPerfPeak);
+    }
+  }
+
+  function planGlow(peakPerf){
+    // Start the glow effect slightly before peak so it visually ramps up.
+    // We'll start 220ms before peak.
+    glowStartAt = peakPerf - 220;
+    nextGlowAt = peakPerf;
+
+    // Update countdown pill
+    tickCountdown();
+
+    // Set timers
+    const now = performance.now();
+    const startDelay = Math.max(0, glowStartAt - now);
+    const peakDelay = Math.max(0, nextGlowAt - now);
+
+    setTimeout(() => {
+      stage.classList.add("glowOn");
+      acceptingTap = true;
+      // If someone taps slightly early, still score within window.
+    }, startDelay);
+
+    setTimeout(() => {
+      // Peak moment: nudge feedback to "TAP!"
+      showFeedback("TAP!", "Hit it NOW ❤️", "accent");
+      haptic([12]);
+      // Stop glow after animation completes
+      setTimeout(() => stage.classList.remove("glowOn"), 760);
+
+      // Close window after +WINDOW_MS
+      setTimeout(() => {
+        if (acceptingTap) {
+          // Miss
+          acceptingTap = false;
+          streak = 0;
+          streakEl.textContent = String(streak);
+          lastEl.textContent = "Miss";
+          meterFill.style.width = "0%";
+          showFeedback("MISS", "Wait for the next glow.", "bad");
+          haptic([30, 40, 30]);
+        }
+        // Schedule next round
+        scheduleNextGlow();
+      }, WINDOW_MS + 40);
+    }, peakDelay);
+  }
+
+  function tickCountdown(){
+    const now = performance.now();
+    const ms = nextGlowAt ? Math.max(0, nextGlowAt - now) : 0;
+    nextInEl.textContent = nextGlowAt ? `${Math.ceil(ms/100)/10}s` : "—";
+    if (nextGlowAt) requestAnimationFrame(tickCountdown);
+  }
+
+  // ---------- Scoring ----------
+  function scoreTap(tapPerf){
+    const delta = tapPerf - nextGlowAt;         // negative = early
+    const absDelta = Math.abs(delta);
+
+    // Sync percent: 100 at perfect, 0 at window edge
+    const raw = 1 - (absDelta / WINDOW_MS);
+    const sync = clamp(raw, 0, 1);
+    const pct = Math.round(sync * 100);
+
+    // Visual reaction size
+    // Perfect -> bigger scale, plus a little punch
+    const scale = 1 + 0.35 * sync; // up to 1.35
+    heart.style.transform = `scale(${scale})`;
+    setTimeout(() => heart.style.transform = "scale(1.02)", 120);
+
+    // Meter
+    meterFill.style.width = `${pct}%`;
+
+    // Streak & best
+    if (pct >= 60) streak++;
+    else streak = 0;
+    streakEl.textContent = String(streak);
+
+    if (pct > best) best = pct;
+    bestEl.textContent = String(best);
+
+    // Copy for feedback
+    let title = "OK";
+    let sub = `Δ ${fmtMs(delta)} • ${pct}% sync`;
+    let tone = "warn";
+    let vibe = [16];
+
+    if (pct >= 95) { title = "PERFECT"; tone="good"; vibe=[18, 25, 18]; }
+    else if (pct >= 85) { title = "GREAT"; tone="good"; vibe=[18, 18]; }
+    else if (pct >= 70) { title = "NICE"; tone="accent"; vibe=[14, 18]; }
+    else if (pct >= 50) { title = "CLOSE"; tone="warn"; vibe=[12]; }
+    else { title = "OFF"; tone="bad"; vibe=[28]; }
+
+    lastEl.textContent = `${pct}%`;
+    showFeedback(title, sub, tone);
+    haptic(vibe);
+
+    return { pct, delta };
+  }
+
+  function showFeedback(title, sub, tone){
+    feedbackTitle.textContent = title;
+    feedbackSub.textContent = sub;
+
+    feedbackTitle.style.color =
+      tone === "good" ? "var(--good)" :
+      tone === "warn" ? "var(--warn)" :
+      tone === "bad" ? "var(--bad)" :
+      tone === "accent" ? "var(--accent2)" :
+      "var(--text)";
+
+    feedback.classList.add("show");
+    clearTimeout(showFeedback._t);
+    showFeedback._t = setTimeout(() => feedback.classList.remove("show"), 900);
+  }
+
+  // ---------- Input ----------
+  function onTap(){
+    const t = performance.now();
+
+    // Prevent double taps within 120ms
+    if (t - lastTapAt < 120) return;
+    lastTapAt = t;
+
+    // Only score if within the window (early or late)
+    const absDelta = Math.abs(t - nextGlowAt);
+    if (!nextGlowAt) return;
+
+    if (absDelta <= WINDOW_MS) {
+      acceptingTap = false;
+      scoreTap(t);
+      // Schedule next (slight delay so reaction feels satisfying)
+      setTimeout(() => scheduleNextGlow(), 260);
+    } else {
+      // Tap outside window: tiny nudge feedback, but don’t kill the round
+      showFeedback("WAIT", "Hold… glow hasn’t peaked yet.", "warn");
+      haptic([8]);
+    }
+  }
+
+  // Tap anywhere on stage
+  stage.addEventListener("pointerdown", (e) => {
+    // ignore clicks on controls area? (we want tap anywhere)
+    onTap();
+  }, {passive:true});
+  tapBtn.addEventListener("click", onTap);
+
+  // Keyboard (for desktop testing)
+  window.addEventListener("keydown", (e) => {
+    if (e.code === "Space" || e.key.toLowerCase() === "t") {
+      e.preventDefault();
+      onTap();
+    }
+  });
+
+  // ---------- Room Mode: Host / Join ----------
+  function makeRoomLink(){
+    const seed = (crypto.getRandomValues(new Uint32Array(1))[0]) >>> 0;
+    // Start a few seconds in the future so everyone has time to open it
+    const start = Date.now() + 6500;
+
+    const url = new URL(location.href);
+    url.searchParams.set("seed", String(seed));
+    url.searchParams.set("start", String(start));
+
+    roomSeed = seed;
+    roomStartEpoch = start;
+    roomLinkUrl = url.toString();
+
+    roomLink.value = roomLinkUrl;
+    roomBox.style.display = "flex";
+
+    // Switch to room mode
+    setMode("room");
+
+    // Helpful feedback
+    const startIn = Math.max(0, start - Date.now());
+    showFeedback("ROOM READY", `Starts in ${Math.ceil(startIn/100)/10}s • Share link now`, "accent");
+  }
+
+  function joinRoomLink(){
+    const link = prompt("Paste the Room Mode link here:");
+    if (!link) return;
+    try{
+      const url = new URL(link);
+      const seed = Number(url.searchParams.get("seed"));
+      const start = Number(url.searchParams.get("start"));
+      if (!Number.isFinite(seed) || !Number.isFinite(start)) throw new Error("Missing seed/start");
+      // Navigate to it so params apply cleanly
+      location.href = url.toString();
+    }catch(err){
+      alert("That link doesn’t look right. Make sure it includes ?seed=...&start=...");
+    }
+  }
+
+  async function copyRoomLink(){
+    if (!roomLink.value) return;
+    try{
+      await navigator.clipboard.writeText(roomLink.value);
+      showFeedback("COPIED", "Send it to everyone in the room.", "good");
+    }catch{
+      // Fallback
+      roomLink.select();
+      document.execCommand("copy");
+      showFeedback("COPIED", "Send it to everyone in the room.", "good");
+    }
+  }
+
+  // Buttons
+  practiceBtn.addEventListener("click", () => {
+    // Clear room params
+    roomSeed = null;
+    roomStartEpoch = null;
+    roomStartPerf = null;
+    roomLinkUrl = null;
+    const url = new URL(location.href);
+    url.searchParams.delete("seed");
+    url.searchParams.delete("start");
+    history.replaceState({}, "", url.toString());
+
+    setMode("practice");
+    showFeedback("PRACTICE", "Random glow timings (solo).", "accent");
+  });
+
+  hostBtn.addEventListener("click", makeRoomLink);
+  joinBtn.addEventListener("click", joinRoomLink);
+  copyLinkBtn.addEventListener("click", copyRoomLink);
+
+  resetBtn.addEventListener("click", () => {
+    resetScore();
+    resetRoundTimers();
+    scheduleNextGlow();
+  });
+
+  // ---------- Init ----------
+  resetScore();
+
+  if (mode === "room") {
+    // We are joining from URL
+    roomSeed = (Number(params.get("seed")) >>> 0);
+    roomStartEpoch = Number(params.get("start"));
+    roomLinkUrl = location.href;
+
+    roomLink.value = roomLinkUrl;
+    roomBox.style.display = "flex";
+    setMode("room");
+
+    const startIn = roomStartEpoch - Date.now();
+    if (startIn > 0) {
+      showFeedback("JOINED ROOM", `Starts in ${Math.ceil(startIn/100)/10}s`, "accent");
+    } else {
+      showFeedback("JOINED ROOM", "Tap on the glow peak ❤️", "accent");
+    }
+  } else {
+    setMode("practice");
+    showFeedback("READY", "Wait for the glow…", null);
+  }
+
+  // Safety: prevent iOS double-tap zoom on button-ish areas
+  let lastTouchEnd = 0;
+  document.addEventListener("touchend", (e) => {
+    const now = Date.now();
+    if (now - lastTouchEnd <= 250) e.preventDefault();
+    lastTouchEnd = now;
+  }, { passive:false });
+
+})();
+</script>
 </body>
 </html>
