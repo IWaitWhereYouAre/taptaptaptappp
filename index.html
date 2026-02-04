@@ -23,6 +23,9 @@
 
       --red:#b01d2a;
       --black:#1d2026;
+
+      --leaf:#2f5b46;
+      --leaf2:#3f7a5d;
     }
 
     *{ box-sizing:border-box; }
@@ -43,6 +46,7 @@
       position:relative;
     }
 
+    /* dreamy dust */
     body::before{
       content:"";
       position:fixed;
@@ -59,19 +63,26 @@
       mix-blend-mode: screen;
     }
 
+    /* garden edge glow (vines without images) */
     body::after{
       content:"";
       position:fixed;
       inset:0;
       pointer-events:none;
-      background: radial-gradient(820px 540px at 50% 40%, transparent 56%, rgba(0,0,0,.09) 100%);
-      opacity:.55;
+      background:
+        radial-gradient(340px 240px at 0% 0%, rgba(63,122,93,.18), transparent 68%),
+        radial-gradient(340px 240px at 100% 0%, rgba(63,122,93,.14), transparent 68%),
+        radial-gradient(340px 240px at 0% 100%, rgba(63,122,93,.14), transparent 68%),
+        radial-gradient(340px 240px at 100% 100%, rgba(63,122,93,.18), transparent 68%),
+        radial-gradient(900px 540px at 50% 40%, transparent 56%, rgba(0,0,0,.08) 100%);
+      opacity:.78;
+      mix-blend-mode:multiply;
     }
 
     /* =========================
-       HEART BALLOONS (bigger + clearly heart)
+       SECRET GARDEN FX LAYER
        ========================= */
-    #heartBalloons{
+    #gardenFX{
       position:fixed;
       inset:0;
       pointer-events:none;
@@ -79,123 +90,90 @@
       z-index:0;
     }
 
-    .heartBalloon{
+    /* petals */
+    .petal{
       position:absolute;
       left:0; top:0;
-      width: 76px;   
-      height: 76px;           
+      width: 18px;
+      height: 26px;
       opacity: 0;
-      will-change: transform, opacity;
-      animation: floatHeartBalloon var(--dur, 8s) cubic-bezier(.2,.85,.2,1) forwards;
-      filter: drop-shadow(0 18px 28px rgba(20,16,28,.16));
+      border-radius: 999px 999px 999px 999px;
+      transform-origin: 50% 80%;
+      will-change: transform, opacity, filter;
+      animation: driftPetal var(--dur, 8s) ease-in forwards;
+      filter: drop-shadow(0 10px 18px rgba(20,16,28,.10));
     }
 
-    /* Heart made from 2 circles + square (classic heart) */
-    .heartBalloon .hb{
-      position:absolute;
-      inset:0;
-      transform: rotate(-45deg);
-      transform-origin: 50% 60%;
-      filter: saturate(1.05);
-    }
-
-    .heartBalloon .hb::before,
-    .heartBalloon .hb::after{
+    .petal::before{
       content:"";
       position:absolute;
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      top: 8px;
+      inset:0;
+      border-radius: 999px;
       background:
-        radial-gradient(18px 18px at 28% 24%, rgba(255,255,255,.80), rgba(255,255,255,0) 62%),
-        radial-gradient(26px 22px at 38% 32%, rgba(255,255,255,.30), rgba(255,255,255,0) 70%),
-        linear-gradient(180deg, rgba(255,255,255,.16), rgba(0,0,0,.07)),
-        var(--c, rgba(243,223,179,.92));
+        radial-gradient(10px 10px at 30% 25%, rgba(255,255,255,.65), rgba(255,255,255,0) 60%),
+        linear-gradient(180deg, rgba(255,255,255,.15), rgba(0,0,0,.06)),
+        var(--c, rgba(244,217,227,.88));
       box-shadow:
-        inset -10px -14px 20px rgba(0,0,0,.12),
-        inset  10px  14px 22px rgba(255,255,255,.24);
-    }
-    .heartBalloon .hb::before{ left: 12px; }
-    .heartBalloon .hb::after { left: 32px; }
-
-    .heartBalloon .hb .base{
-      position:absolute;
-      left: 22px;
-      top: 26px;
-      width: 54px;
-      height: 54px;
-      border-radius: 14px;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.16), rgba(0,0,0,.07)),
-        var(--c, rgba(243,223,179,.92));
-      box-shadow:
-        inset -10px -14px 20px rgba(0,0,0,.12),
-        inset  10px  14px 22px rgba(255,255,255,.24);
+        inset -6px -10px 14px rgba(0,0,0,.08),
+        inset  6px  10px 16px rgba(255,255,255,.22);
+      transform: rotate(18deg);
     }
 
-    /* thin gold rim, still heart-shaped */
-    .heartBalloon .rim{
+    /* subtle vein */
+    .petal::after{
+      content:"";
       position:absolute;
-      inset:-2px;
-      transform: rotate(-45deg);
-      transform-origin: 50% 60%;
-      border:1px solid rgba(200,163,90,.22);
-      border-radius: 16px;
+      left: 48%;
+      top: 20%;
+      width: 1px;
+      height: 62%;
+      background: rgba(255,255,255,.25);
+      transform: rotate(10deg);
       opacity:.55;
-      /* mask rim into heart silhouette */
-      -webkit-mask:
-        radial-gradient(circle 22px at 34px 30px, #000 99%, transparent 100%),
-        radial-gradient(circle 22px at 54px 30px, #000 99%, transparent 100%),
-        linear-gradient(#000 0 0);
-      -webkit-mask-composite: source-over;
-      mask:
-        radial-gradient(circle 22px at 34px 30px, #000 99%, transparent 100%),
-        radial-gradient(circle 22px at 54px 30px, #000 99%, transparent 100%),
-        linear-gradient(#000 0 0);
-      mask-composite: add;
     }
 
-    .knot{
-      position:absolute;
-      left:50%;
-      bottom:-10px;
-      transform: translateX(-50%) rotate(45deg);
-      width: 10px;
-      height: 10px;
-      background: rgba(0,0,0,.10);
-      border-radius: 2px;
-      opacity:.65;
-      mix-blend-mode:multiply;
-    }
-
-    .string{
-      position:absolute;
-      left:50%;
-      bottom:-130px;    
-      transform: translateX(-50%);
-      width:1px;
-      height:124px;
-      background: linear-gradient(180deg, rgba(40,38,46,.42), rgba(40,38,46,0));
-      opacity:.30;
-      filter: blur(.05px);
-    }
-
-    @keyframes floatHeartBalloon{
+    @keyframes driftPetal{
       0%{
-        opacity: 0;
-        transform: translate(var(--x, 0px), var(--y0, 60px)) scale(var(--s, 1)) rotate(var(--r0, -8deg));
+        opacity:0;
+        transform: translate(var(--x, 0px), var(--y0, -40px)) rotate(var(--r0, 0deg)) scale(var(--s, 1));
+        filter: blur(.15px);
       }
-      12%{ opacity: .72; }
-      62%{ opacity: .46; }
+      12%{ opacity:.72; }
+      55%{ opacity:.52; }
       100%{
-        opacity: 0;
-        transform: translate(calc(var(--x, 0px) + var(--drift, 60px)), var(--y1, -720px)) scale(calc(var(--s, 1) * 1.07)) rotate(var(--r1, 10deg));
+        opacity:0;
+        transform: translate(calc(var(--x, 0px) + var(--drift, 120px)), var(--y1, 120vh))
+                   rotate(var(--r1, 220deg)) scale(calc(var(--s, 1) * 1.06));
+        filter: blur(.25px);
       }
+    }
+
+    /* firefly sparkles */
+    .spark{
+      position:absolute;
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      opacity: 0;
+      background: rgba(255,255,255,.75);
+      box-shadow:
+        0 0 10px rgba(240,223,179,.55),
+        0 0 22px rgba(200,163,90,.25);
+      animation: twinkle var(--tdur, 3.8s) ease-in-out forwards;
+      will-change: transform, opacity;
+      filter: blur(.1px);
+    }
+
+    @keyframes twinkle{
+      0%{ opacity:0; transform: translate(var(--sx,0px), var(--sy,0px)) scale(.6); }
+      20%{ opacity:.8; }
+      50%{ opacity:.5; transform: translate(calc(var(--sx,0px) + var(--sdx, 22px)), calc(var(--sy,0px) + var(--sdy,-18px))) scale(1); }
+      80%{ opacity:.7; }
+      100%{ opacity:0; transform: translate(calc(var(--sx,0px) + var(--sdx, 40px)), calc(var(--sy,0px) + var(--sdy,-34px))) scale(.7); }
     }
 
     @media (prefers-reduced-motion: reduce){
-      #heartBalloons{ display:none; }
+      #gardenFX{ display:none; }
     }
 
     /* =========================
@@ -215,10 +193,10 @@
       transform: translateZ(0);
     }
 
-     .content{
+    .content{
       position:relative;
       z-index:3;
-      padding: 0 26px 0; /* space away from corners */
+      padding: 0 26px 0;
     }
 
     .manuscript::before{
@@ -227,7 +205,7 @@
       inset:-2px;
       pointer-events:none;
       background:
-        radial-gradient(520px 300px at 18% 16%, rgba(61,107,85,.10), transparent 60%),
+        radial-gradient(520px 300px at 18% 16%, rgba(63,122,93,.10), transparent 60%),
         radial-gradient(520px 300px at 82% 22%, rgba(200,163,90,.12), transparent 62%),
         repeating-linear-gradient(0deg, rgba(34,34,42,.014) 0px, rgba(34,34,42,.014) 1px, transparent 2px, transparent 7px);
       opacity:.86;
@@ -259,7 +237,7 @@
       border:1px solid rgba(0,0,0,.08);
       box-shadow: 0 14px 28px rgba(20,16,28,.12), inset 0 0 0 1px rgba(255,255,255,.65);
       pointer-events:none;
-      z-index:2;
+      z-index:5;
       overflow:hidden;
       transform: rotate(var(--rot, -4deg));
     }
@@ -300,14 +278,12 @@
       font-size:28px;
       text-shadow: 0 1px 0 rgba(255,255,255,.6);
     }
-
     .p1{ top:10px; left:10px; --rot:-6deg; }
     .p2{ top:10px; right:10px; --rot:6deg; }
     .p3{ bottom:10px; left:10px; --rot:6deg; }
     .p4{ bottom:10px; right:10px; --rot:-6deg; }
 
-    .pcorner{ z-index:5; }
-
+    /* text / inputs / button (same as yours) */
     .welcome{
       display:flex;
       align-items:center;
@@ -413,7 +389,7 @@
       box-shadow: 0 0 0 4px rgba(61,107,85,.10), 0 16px 34px rgba(20,16,28,.10);
     }
 
-      button{
+    button{
       width:min(360px, 100%);
       margin:14px auto 0;
       display:block;
@@ -474,18 +450,17 @@
       .pcorner::after{ font-size:36px; }
       .pcorner .centerSuit{ font-size:26px; }
       .val{ font-size: clamp(64px, 12vw, 86px); }
-      .heartBalloon{ width:64px; height:64px; } /* still big on mobile */
     }
   </style>
 </head>
 
 <body>
-  <div id="heartBalloons" aria-hidden="true"></div>
+  <!-- ✅ secret garden FX -->
+  <div id="gardenFX" aria-hidden="true"></div>
 
   <div class="manuscript">
     <div class="frame"></div>
 
-    <!-- corners -->
     <div class="pcorner p1" style="--wm:'♥';">
       <div class="rank" style="color:var(--red)"><div>A</div><div class="suit">♥</div></div>
       <div class="centerSuit" style="color:var(--red)">♥</div>
@@ -582,99 +557,115 @@
     }
 
     /* =========================
-       Heart Balloon engine (bigger + less frequent)
+       Secret Garden FX: petals + fireflies
        ========================= */
-    const heartBalloonsLayer = document.getElementById("heartBalloons");
+    const fx = document.getElementById("gardenFX");
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
     function rand(min, max){ return Math.random() * (max - min) + min; }
 
-    function spawnHeartBalloon(){
-      const wrap = document.createElement("div");
-      wrap.className = "heartBalloon";
+    function spawnPetal(){
+      const el = document.createElement("div");
+      el.className = "petal";
 
-      const hbWrap = document.createElement("div");
-      hbWrap.className = "hb";
-      const base = document.createElement("div");
-      base.className = "base";
-      hbWrap.appendChild(base);
+      const vw = window.innerWidth;
+      const x = rand(-40, vw + 40);
+      const dur = rand(6.8, 10.8);
+      const scale = rand(0.75, 1.6);
+      const r0 = rand(-40, 40);
+      const r1 = r0 + rand(160, 360);
+      const drift = rand(-180, 180);
 
-      const rim = document.createElement("div");
-      rim.className = "rim";
+      const colors = [
+        "rgba(244,217,227,.88)", // blush petal
+        "rgba(243,223,179,.82)", // champagne
+        "rgba(223,240,232,.86)", // sage
+        "rgba(219,233,255,.82)"  // sky
+      ];
+      el.style.setProperty("--c", colors[Math.floor(Math.random()*colors.length)]);
 
-      const knot = document.createElement("div");
-      knot.className = "knot";
-      const string = document.createElement("div");
-      string.className = "string";
+      el.style.left = x + "px";
+      el.style.top  = rand(-60, -10) + "px";
 
-      wrap.appendChild(hbWrap);
-      wrap.appendChild(rim);
-      wrap.appendChild(knot);
-      wrap.appendChild(string);
+      el.style.setProperty("--x", "0px");
+      el.style.setProperty("--y0", "0px");
+      el.style.setProperty("--y1", "0px");
+      el.style.setProperty("--drift", drift + "px");
+      el.style.setProperty("--dur", dur + "s");
+      el.style.setProperty("--s", scale);
+      el.style.setProperty("--r0", r0 + "deg");
+      el.style.setProperty("--r1", r1 + "deg");
+
+      // slight size variety
+      const w = rand(14, 22);
+      const h = w * rand(1.25, 1.55);
+      el.style.width = w + "px";
+      el.style.height = h + "px";
+
+      fx.appendChild(el);
+      el.addEventListener("animationend", () => el.remove());
+    }
+
+    function spawnSpark(){
+      const el = document.createElement("div");
+      el.className = "spark";
 
       const vw = window.innerWidth;
       const vh = window.innerHeight;
 
-      const startX = rand(0.06, 0.94) * vw;
-      const startY = vh + rand(60, 140);
+      const x = rand(0.08, 0.92) * vw;
+      const y = rand(0.10, 0.86) * vh;
 
-      const drift = rand(-140, 140);
-      const dur = rand(6.6, 10.2);
-      const scale = rand(0.85, 1.35);   
-      const r0 = rand(-10, -4);
-      const r1 = rand(6, 14);
+      el.style.left = x + "px";
+      el.style.top  = y + "px";
 
-      const colors = [
-        "rgba(243,223,179,.92)",
-        "rgba(244,217,227,.92)",
-        "rgba(219,233,255,.92)",
-        "rgba(223,240,232,.92)",
-        "rgba(200,163,90,.88)"
-      ];
-      const c = colors[Math.floor(Math.random()*colors.length)];
-      wrap.style.setProperty("--c", c);
+      el.style.setProperty("--sx", "0px");
+      el.style.setProperty("--sy", "0px");
+      el.style.setProperty("--sdx", rand(-40, 40) + "px");
+      el.style.setProperty("--sdy", rand(-50, 30) + "px");
+      el.style.setProperty("--tdur", rand(2.8, 4.6) + "s");
 
-      wrap.style.left = startX + "px";
-      wrap.style.top  = startY + "px";
+      // tiny size variation
+      const size = rand(4, 7);
+      el.style.width = size + "px";
+      el.style.height = size + "px";
 
-      wrap.style.setProperty("--x", "0px");
-      wrap.style.setProperty("--y0", "0px");
-      wrap.style.setProperty("--y1", (-rand(420, 760)) + "px");
-      wrap.style.setProperty("--drift", drift + "px");
-      wrap.style.setProperty("--dur", dur + "s");
-      wrap.style.setProperty("--s", scale);
-      wrap.style.setProperty("--r0", r0 + "deg");
-      wrap.style.setProperty("--r1", r1 + "deg");
-
-      heartBalloonsLayer.appendChild(wrap);
-      wrap.addEventListener("animationend", () => wrap.remove());
+      fx.appendChild(el);
+      el.addEventListener("animationend", () => el.remove());
     }
 
-    let heartBalloonTimer = null;
+    let petalTimer = null;
+    let sparkTimer = null;
 
-    function startHeartBalloons(){
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-      if (heartBalloonTimer) return;
+    function startGardenFX(){
+      if (prefersReduced) return;
+      if (petalTimer || sparkTimer) return;
 
-      for(let i=0;i<6;i++){
-        setTimeout(spawnHeartBalloon, i * 220);
-      }
+      // gentle start burst
+      for(let i=0;i<10;i++) setTimeout(spawnPetal, i*120);
+      for(let i=0;i<12;i++) setTimeout(spawnSpark, i*140);
 
-      heartBalloonTimer = setInterval(() => {
-        spawnHeartBalloon();
-        if (Math.random() < 0.25) spawnHeartBalloon();
-      }, 980);
+      // steady ambience
+      petalTimer = setInterval(() => {
+        spawnPetal();
+        if (Math.random() < 0.35) spawnPetal();
+      }, 520);
+
+      sparkTimer = setInterval(() => {
+        spawnSpark();
+        if (Math.random() < 0.55) spawnSpark();
+      }, 420);
     }
 
-    startHeartBalloons();
+    startGardenFX();
     window.addEventListener("visibilitychange", () => {
       if (document.hidden){
-        clearInterval(heartBalloonTimer);
-        heartBalloonTimer = null;
+        clearInterval(petalTimer); clearInterval(sparkTimer);
+        petalTimer = null; sparkTimer = null;
       } else {
-        startHeartBalloons();
+        startGardenFX();
       }
     });
   </script>
 </body>
 </html>
-
-
