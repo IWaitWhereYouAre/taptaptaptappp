@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-  <title>Tap Together ❤️</title>
+  <title>ISA Tap Together ❤️</title>
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;600;800&display=swap');
@@ -47,38 +47,17 @@
       position:relative;
       overflow:hidden;
     }
-    .panel::before{
-      content:"";
-      position:absolute;
-      inset:-2px;
-      background:
-        radial-gradient(650px 280px at 8% 0%, rgba(197,160,89,.16), transparent 62%),
-        radial-gradient(650px 280px at 95% 100%, rgba(216,90,122,.10), transparent 62%);
-      pointer-events:none;
-    }
 
     .top{position:relative; display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;}
-    h1{
-      margin:0;
-      font-family:"Playfair Display", serif;
-      font-size:22px;
-      font-weight:700;
-      letter-spacing:.2px;
-    }
+    h1{ margin:0; font-family:"Playfair Display", serif; font-size:22px; font-weight:700; }
     .sub{margin:6px 0 0; color:var(--muted); font-size:13px; line-height:1.45; max-width:70ch;}
 
-    .controls{position:relative; display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:flex-end;}
+    .controls{display:flex; gap:10px; align-items:center;}
     .btn{
-      appearance:none;
-      border:1px solid rgba(27,27,31,.16);
-      background: rgba(255,255,255,.72);
-      color:var(--ink);
-      padding:10px 12px;
-      border-radius:14px;
-      font-weight:800;
-      font-size:13px;
-      cursor:pointer;
-      user-select:none;
+      appearance:none; border:1px solid rgba(27,27,31,.16);
+      background: rgba(255,255,255,.72); color:var(--ink);
+      padding:10px 12px; border-radius:14px; font-weight:800;
+      font-size:13px; cursor:pointer;
     }
     .btn.primary{
       border-color: rgba(197,160,89,.55);
@@ -86,381 +65,165 @@
     }
 
     .stage{
-      position:relative;
-      width:100%;
-      min-height: 440px;
-      border-radius:24px;
-      border:1px solid var(--border);
-      background:
-        radial-gradient(950px 520px at 50% 30%, rgba(216,90,122,.10), transparent 65%),
-        radial-gradient(850px 520px at 40% 85%, rgba(197,160,89,.12), transparent 60%),
-        rgba(255,255,255,.48);
-      display:grid;
-      place-items:center;
-      overflow:hidden;
-      padding:18px;
-      touch-action: manipulation;
+      position:relative; width:100%; min-height: 440px; border-radius:24px;
+      border:1px solid var(--border); background: rgba(255,255,255,.48);
+      display:grid; place-items:center; overflow:hidden; touch-action: manipulation;
     }
 
     .pill{
-      position:absolute;
-      top:14px; left:14px; right:14px;
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      flex-wrap:wrap;
-      pointer-events:none;
-      font-size:12px;
-      color:var(--muted);
+      position:absolute; top:14px; left:14px; right:14px;
+      display:flex; justify-content:space-between; pointer-events:none;
+      font-size:12px; color:var(--muted); z-index:10;
     }
-    .pill > div{
-      background: rgba(255,255,255,.72);
-      border:1px solid rgba(27,27,31,.12);
-      padding:8px 10px;
-      border-radius:999px;
-    }
-    .pill b{color:var(--ink)}
+    .pill > div{ background: rgba(255,255,255,.72); border:1px solid var(--border); padding:8px 10px; border-radius:999px; }
 
-    .heartWrap{
-      position:relative;
-      display:grid;
-      place-items:center;
-      width:min(360px, 65vw);
-      aspect-ratio:1/1;
-      user-select:none;
+    .heartWrap{ position:relative; display:grid; place-items:center; width:min(360px, 65vw); aspect-ratio:1/1; }
+    .heart{ font-size: clamp(110px, 15vw, 200px); transition: transform 200ms cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+
+    /* The Glow Effect */
+    .glow .heart {
+      filter: drop-shadow(0 0 30px rgba(216,90,122,0.8));
+      animation: heartbeat 0.6s infinite;
     }
 
-    .heart{
-      font-size: clamp(110px, 15vw, 200px);
-      transform: scale(1);
-      transition: transform 180ms ease, filter 180ms ease;
-      filter: drop-shadow(0 18px 35px rgba(216,90,122,.16));
-    }
-
-    .glow .heart{
-      filter:
-        drop-shadow(0 0 20px rgba(216,90,122,.55))
-        drop-shadow(0 0 50px rgba(197,160,89,.30));
-      animation: pulse 600ms ease-in-out both;
-    }
-    @keyframes pulse{
-      0%{ transform: scale(var(--base,1)); }
-      50%{ transform: scale(calc(var(--base,1) * 1.08)); }
-      100%{ transform: scale(calc(var(--base,1) * 1.02)); }
+    @keyframes heartbeat {
+      0% { transform: scale(var(--base, 1)); }
+      50% { transform: scale(calc(var(--base, 1) * 1.15)); }
+      100% { transform: scale(var(--base, 1)); }
     }
 
     .msg{
-      position:absolute;
-      inset:auto 14px 18px 14px;
-      text-align:center;
-      font-weight:900;
-      letter-spacing:.2px;
-      opacity:0;
-      transform: translateY(8px);
-      transition: opacity .18s ease, transform .18s ease;
-      pointer-events:none;
+      position:absolute; bottom:80px; left:0; right:0; text-align:center;
+      opacity:0; transition: all 0.3s ease; pointer-events:none;
     }
-    .msg.show{opacity:1; transform: translateY(0);}
-    .msg small{display:block; margin-top:6px; font-weight:650; color:var(--muted);}
+    .msg.show{ opacity:1; transform: translateY(-10px); }
+    #msgTitle{ font-weight:900; font-size:1.2rem; color: var(--rose); }
 
-    .tapBtn{
-      position:absolute;
-      bottom:14px;
-      right:14px;
-      left:14px;
-      display:flex;
-      justify-content:center;
-    }
+    .tapBtn{ position:absolute; bottom:20px; width:100%; display:flex; justify-content:center; }
     .tapBtn button{
-      border:1px solid rgba(27,27,31,.14);
-      background: rgba(255,255,255,.82);
-      border-radius:18px;
-      padding:14px 18px;
-      font-weight:950;
-      font-size:16px;
-      cursor:pointer;
-      min-width: min(420px, 90%);
-    }
-
-    .overlay{
-      position:fixed; inset:0;
-      background: rgba(20,18,16,.25);
-      backdrop-filter: blur(10px);
-      display:none;
-      place-items:center;
-      padding:18px;
-      z-index:50;
-    }
-    .overlay.show{display:grid}
-    .modal{
-      width:min(520px, 96vw);
-      background: rgba(255,255,255,.90);
-      border:1px solid rgba(27,27,31,.14);
-      border-radius:22px;
-      box-shadow:0 18px 60px rgba(0,0,0,.20);
-      padding:16px;
-    }
-    .modal h2{margin:0; font-family:"Playfair Display", serif; font-size:18px;}
-    .modal p{margin:8px 0 0; color:var(--muted); font-size:13px; line-height:1.45;}
-    .row{display:flex; gap:10px; margin-top:12px; flex-wrap:wrap;}
-    .input{
-      flex:1; min-width:220px;
-      padding:12px 12px;
-      border-radius:14px;
-      border:1px solid rgba(27,27,31,.16);
-      outline:none;
-      font-weight:900;
-      font-size:14px;
-      background: rgba(255,255,255,.95);
-      color:var(--ink);
+      border:none; background: var(--ink); color: white;
+      padding:16px 40px; border-radius:100px; font-weight:800;
+      font-size:18px; cursor:pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.2);
     }
   </style>
 </head>
-
 <body>
+
   <div class="wrap">
     <div class="panel">
       <div class="top">
         <div>
-          <h1>Tap-Together Challenge</h1>
-          <div class="sub">
-            When the heart glows, everyone taps. Each successful glow-tap grows the heart.
-            When it’s full… <b>BOOM</b> ✨ — a warm word for the room.
-          </div>
+          <h1>ISA Together</h1>
+          <div class="sub">Tap 10 times when the heart glows to unlock the welcome.</div>
         </div>
         <div class="controls">
-          <button class="btn primary" id="roomBtn">Room Mode</button>
-          <button class="btn" id="practiceBtn">Practice</button>
-          <button class="btn" id="resetBtn">Reset</button>
+          <button class="btn primary" onclick="location.reload()">Sync/Reset</button>
         </div>
       </div>
 
       <div class="stage" id="stage">
         <div class="pill">
-          <div>Mode: <b id="modeText">Practice</b></div>
-          <div>Room: <b id="roomText">—</b></div>
-          <div>Build: <b id="buildText">0</b>/7</div>
+          <div>Build: <b id="buildText">0</b>/10</div>
+          <div id="statusText">Waiting for rhythm...</div>
         </div>
 
-        <div class="heartWrap" id="heartWrap">
+        <div class="heartWrap">
           <div class="heart" id="heart">❤️</div>
         </div>
 
         <div class="msg" id="msg">
-          <div id="msgTitle">READY</div>
-          <small id="msgSub">Wait for the glow… then tap.</small>
+          <div id="msgTitle">TAP NOW!</div>
+          <div id="msgSub">Together!</div>
         </div>
 
         <div class="tapBtn">
-          <button id="tapBtn">Tap ❤️</button>
+          <button id="tapBtn">TAP HEART ❤️</button>
         </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="overlay" id="overlay">
-    <div class="modal">
-      <h2>Room Mode</h2>
-      <p>Type a room code (example: <b>isa</b>). Everyone who types the same code plays “together” on the same glow rhythm.</p>
-      <div class="row">
-        <input class="input" id="roomInput" placeholder="isa" maxlength="24" autocapitalize="none" autocomplete="off"/>
-        <button class="btn primary" id="joinBtn">Join</button>
-        <button class="btn" id="cancelBtn">Cancel</button>
       </div>
     </div>
   </div>
 
 <script>
-(() => {
-  const $ = (id) => document.getElementById(id);
+  const heart = document.getElementById('heart');
+  const buildText = document.getElementById('buildText');
+  const statusText = document.getElementById('statusText');
+  const msg = document.getElementById('msg');
+  const msgTitle = document.getElementById('msgTitle');
+  const tapBtn = document.getElementById('tapBtn');
+  const stage = document.getElementById('stage');
 
-  // --- UI ---
-  const stage = $("stage");
-  const heartWrap = $("heartWrap");
-  const heart = $("heart");
-  const msg = $("msg");
-  const msgTitle = $("msgTitle");
-  const msgSub = $("msgSub");
-  const modeText = $("modeText");
-  const roomText = $("roomText");
-  const buildText = $("buildText");
-
-  const roomBtn = $("roomBtn");
-  const practiceBtn = $("practiceBtn");
-  const resetBtn = $("resetBtn");
-  const tapBtn = $("tapBtn");
-
-  const overlay = $("overlay");
-  const roomInput = $("roomInput");
-  const joinBtn = $("joinBtn");
-  const cancelBtn = $("cancelBtn");
-
-  // --- Simple game rules ---
-  const BUILD_MAX = 7;
-  const GLOW_EVERY_MS = 2400;      // easy rhythm
-  const GLOW_ON_MS = 650;          // how long the glow stays "tap-able"
-
-  const WORDS = [
-    "You belong here.",
-    "We’re glad you came.",
-    "Your presence is a gift.",
-    "Kind hearts, bright minds.",
-    "Lovely to meet you.",
-    "Today, we rise together.",
-    "You make this room warmer.",
-    "Welcome — truly.",
-    "Small taps, big joy.",
-    "You are warmly welcomed."
-  ];
-
-  // --- State ---
-  let mode = "practice";
-  let roomCode = "";
   let build = 0;
+  const MAX_BUILD = 10;
+  let canTap = false;
+  let hasTappedThisCycle = false;
 
-  let isGlowing = false;
-  let glowTimer = null;
-  let loopTimer = null;
+  // Sync settings: Heart glows every 3 seconds
+  const CYCLE_MS = 3000; 
+  const GLOW_DURATION = 1000; 
 
-  function showMessage(title, sub){
-    msgTitle.textContent = title;
-    msgSub.textContent = sub;
-    msg.classList.add("show");
-    clearTimeout(showMessage._t);
-    showMessage._t = setTimeout(() => msg.classList.remove("show"), 1200);
-  }
+  function updateLoop() {
+    const now = Date.now();
+    const cyclePos = now % CYCLE_MS;
 
-  function setMode(nextMode){
-    mode = nextMode;
-    modeText.textContent = (mode === "room") ? "Room" : "Practice";
-    roomText.textContent = (mode === "room") ? roomCode : "—";
-  }
-
-  function setBuild(n){
-    build = Math.max(0, Math.min(BUILD_MAX, n));
-    buildText.textContent = String(build);
-
-    const base = 1 + (build / BUILD_MAX) * 0.55; // grows up to 1.55
-    stage.style.setProperty("--base", base.toFixed(3));
-    heart.style.transform = `scale(${base})`;
-  }
-
-  function startLoop(){
-    stopLoop();
-    // immediate gentle intro
-    showMessage("READY", "When it glows… everyone taps ❤️");
-
-    // steady rhythm; optional tiny offset based on room code so rooms feel distinct
-    let offset = 0;
-    if (mode === "room" && roomCode) {
-      offset = (hash32(roomCode) % 500); // 0..499ms (not “precision”, just flavor)
+    if (cyclePos < GLOW_DURATION) {
+      if (!canTap) {
+        canTap = true;
+        hasTappedThisCycle = false;
+        stage.classList.add('glow');
+        showFeedback("NOW!", "Tap together!");
+      }
+    } else {
+      if (canTap) {
+        canTap = false;
+        stage.classList.remove('glow');
+      }
     }
-
-    setTimeout(() => {
-      glowOnce();
-      loopTimer = setInterval(glowOnce, GLOW_EVERY_MS);
-    }, 900 + offset);
+    requestAnimationFrame(updateLoop);
   }
 
-  function stopLoop(){
-    clearInterval(loopTimer);
-    clearTimeout(glowTimer);
-    loopTimer = null;
-    glowTimer = null;
-    isGlowing = false;
-    stage.classList.remove("glow");
+  function showFeedback(title, sub) {
+    msgTitle.innerText = title;
+    msg.classList.add('show');
+    setTimeout(() => msg.classList.remove('show'), 800);
   }
 
-  function glowOnce(){
-    isGlowing = true;
-    stage.classList.add("glow");
-    showMessage("TAP!", "Now — together ❤️");
+  function handleTap() {
+    if (build >= MAX_BUILD) return;
 
-    glowTimer = setTimeout(() => {
-      isGlowing = false;
-      stage.classList.remove("glow");
-    }, GLOW_ON_MS);
-  }
+    if (canTap && !hasTappedThisCycle) {
+      build++;
+      hasTappedThisCycle = true;
+      buildText.innerText = build;
+      
+      // Scale heart
+      const scale = 1 + (build * 0.1);
+      stage.style.setProperty('--base', scale);
+      heart.style.transform = `scale(${scale})`;
 
-  function boom(){
-    const word = WORDS[Math.floor(Math.random() * WORDS.length)];
-    showMessage("BOOM ✨", word);
-    // little “reset” so the group can keep playing
-    setBuild(0);
-  }
-
-  function onTap(){
-    if (!isGlowing) {
-      showMessage("STEADY", "Wait for the glow, darling.");
-      return;
+      if (build >= MAX_BUILD) {
+        finish();
+      } else {
+        showFeedback("NICE!", "Keep going...");
+      }
+    } else if (!canTap) {
+      showFeedback("WAIT!", "Watch the glow.");
     }
-    // successful tap
-    setBuild(build + 1);
-
-    // tiny feedback
-    showMessage("NICE", "Keep it going…");
-
-    // prevent double counting the same glow
-    isGlowing = false;
-    stage.classList.remove("glow");
-
-    if (build >= BUILD_MAX) boom();
   }
 
-  function openRoomModal(){
-    overlay.classList.add("show");
-    roomInput.value = roomCode || "isa";
-    setTimeout(() => roomInput.focus(), 50);
-  }
-  function closeRoomModal(){ overlay.classList.remove("show"); }
-
-  function joinRoom(code){
-    roomCode = (code || "").trim().toLowerCase().replace(/\s+/g,"").slice(0,24) || "isa";
-    setMode("room");
-    setBuild(0);
-    startLoop();
-    showMessage("WELCOME", `Room “${roomCode}” — tap together ❤️`);
+  function finish() {
+    msgTitle.innerText = "BOOM ✨";
+    msgTitle.style.color = "#c5a059";
+    document.getElementById('msgSub').innerText = "ISA warmly welcome you guys";
+    msg.classList.add('show');
+    heart.innerText = "✨";
+    heart.style.transform = "scale(2.5)";
+    statusText.innerText = "Welcome!";
   }
 
-  function hash32(str){
-    let h = 2166136261 >>> 0;
-    for (let i=0;i<str.length;i++){
-      h ^= str.charCodeAt(i);
-      h = Math.imul(h, 16777619);
-    }
-    return h >>> 0;
-  }
-
-  // --- Events ---
-  stage.addEventListener("pointerdown", onTap, {passive:true});
-  tapBtn.addEventListener("click", onTap);
-
-  roomBtn.addEventListener("click", openRoomModal);
-  cancelBtn.addEventListener("click", closeRoomModal);
-  joinBtn.addEventListener("click", () => { closeRoomModal(); joinRoom(roomInput.value); });
-
-  overlay.addEventListener("click", (e) => { if (e.target === overlay) closeRoomModal(); });
-
-  practiceBtn.addEventListener("click", () => {
-    setMode("practice");
-    roomCode = "";
-    roomText.textContent = "—";
-    setBuild(0);
-    startLoop();
-    showMessage("PRACTICE", "Warm up the rhythm ❤️");
-  });
-
-  resetBtn.addEventListener("click", () => {
-    setBuild(0);
-    showMessage("RESET", "Fresh start. Ready?");
-  });
-
-  // --- Init ---
-  setBuild(0);
-  setMode("practice");
-  startLoop();
-
-})();
+  tapBtn.addEventListener('click', handleTap);
+  // Start the global sync loop
+  updateLoop();
 </script>
+
 </body>
 </html>
