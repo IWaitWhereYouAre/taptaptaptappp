@@ -43,7 +43,6 @@
       position:relative;
     }
 
-    /* dreamy dust */
     body::before{
       content:"";
       position:fixed;
@@ -60,7 +59,6 @@
       mix-blend-mode: screen;
     }
 
-    /* subtle vignette */
     body::after{
       content:"";
       position:fixed;
@@ -71,7 +69,7 @@
     }
 
     /* =========================
-       HEART BALLOON BACKGROUND (ลูกโป่งหัวใจ)
+       HEART BALLOONS (bigger + clearly heart)
        ========================= */
     #heartBalloons{
       position:fixed;
@@ -84,48 +82,87 @@
     .heartBalloon{
       position:absolute;
       left:0; top:0;
-      width: 44px;
-      height: 44px;
+      width: 76px;   
+      height: 76px;           
       opacity: 0;
       will-change: transform, opacity;
-      animation: floatHeartBalloon var(--dur, 7s) cubic-bezier(.2,.85,.2,1) forwards;
-      filter: drop-shadow(0 14px 22px rgba(20,16,28,.16));
+      animation: floatHeartBalloon var(--dur, 8s) cubic-bezier(.2,.85,.2,1) forwards;
+      filter: drop-shadow(0 18px 28px rgba(20,16,28,.16));
     }
 
-    /* Heart shape via clip-path */
+    /* Heart made from 2 circles + square (classic heart) */
     .heartBalloon .hb{
       position:absolute;
       inset:0;
-      border-radius: 14px;
-      background:
-        radial-gradient(18px 18px at 28% 24%, rgba(255,255,255,.78), rgba(255,255,255,0) 60%),
-        radial-gradient(26px 22px at 38% 32%, rgba(255,255,255,.30), rgba(255,255,255,0) 68%),
-        linear-gradient(180deg, rgba(255,255,255,.18), rgba(0,0,0,.06)),
-        var(--c, rgba(243,223,179,.92));
-      box-shadow:
-        inset -10px -14px 20px rgba(0,0,0,.12),
-        inset  10px  14px 22px rgba(255,255,255,.28);
-      clip-path: path("M 22 40 C 22 40 3 28 3 16 C 3 8 9 4 14 4 C 18 4 21 6 22 8 C 23 6 26 4 30 4 C 35 4 41 8 41 16 C 41 28 22 40 22 40 Z");
-      position:relative;
+      transform: rotate(-45deg);
+      transform-origin: 50% 60%;
+      filter: saturate(1.05);
     }
 
-    /* thin gold rim */
+    .heartBalloon .hb::before,
     .heartBalloon .hb::after{
       content:"";
       position:absolute;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      top: 8px;
+      background:
+        radial-gradient(18px 18px at 28% 24%, rgba(255,255,255,.80), rgba(255,255,255,0) 62%),
+        radial-gradient(26px 22px at 38% 32%, rgba(255,255,255,.30), rgba(255,255,255,0) 70%),
+        linear-gradient(180deg, rgba(255,255,255,.16), rgba(0,0,0,.07)),
+        var(--c, rgba(243,223,179,.92));
+      box-shadow:
+        inset -10px -14px 20px rgba(0,0,0,.12),
+        inset  10px  14px 22px rgba(255,255,255,.24);
+    }
+    .heartBalloon .hb::before{ left: 12px; }
+    .heartBalloon .hb::after { left: 32px; }
+
+    .heartBalloon .hb .base{
+      position:absolute;
+      left: 22px;
+      top: 26px;
+      width: 54px;
+      height: 54px;
+      border-radius: 14px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.16), rgba(0,0,0,.07)),
+        var(--c, rgba(243,223,179,.92));
+      box-shadow:
+        inset -10px -14px 20px rgba(0,0,0,.12),
+        inset  10px  14px 22px rgba(255,255,255,.24);
+    }
+
+    /* thin gold rim, still heart-shaped */
+    .heartBalloon .rim{
+      position:absolute;
       inset:-2px;
-      clip-path: path("M 22 40 C 22 40 3 28 3 16 C 3 8 9 4 14 4 C 18 4 21 6 22 8 C 23 6 26 4 30 4 C 35 4 41 8 41 16 C 41 28 22 40 22 40 Z");
+      transform: rotate(-45deg);
+      transform-origin: 50% 60%;
       border:1px solid rgba(200,163,90,.22);
-      opacity:.6;
+      border-radius: 16px;
+      opacity:.55;
+      /* mask rim into heart silhouette */
+      -webkit-mask:
+        radial-gradient(circle 22px at 34px 30px, #000 99%, transparent 100%),
+        radial-gradient(circle 22px at 54px 30px, #000 99%, transparent 100%),
+        linear-gradient(#000 0 0);
+      -webkit-mask-composite: source-over;
+      mask:
+        radial-gradient(circle 22px at 34px 30px, #000 99%, transparent 100%),
+        radial-gradient(circle 22px at 54px 30px, #000 99%, transparent 100%),
+        linear-gradient(#000 0 0);
+      mask-composite: add;
     }
 
     .knot{
       position:absolute;
       left:50%;
-      bottom:-7px;
+      bottom:-10px;
       transform: translateX(-50%) rotate(45deg);
-      width: 9px;
-      height: 9px;
+      width: 10px;
+      height: 10px;
       background: rgba(0,0,0,.10);
       border-radius: 2px;
       opacity:.65;
@@ -135,25 +172,25 @@
     .string{
       position:absolute;
       left:50%;
-      bottom:-96px;
+      bottom:-130px;    
       transform: translateX(-50%);
       width:1px;
-      height:92px;
+      height:124px;
       background: linear-gradient(180deg, rgba(40,38,46,.42), rgba(40,38,46,0));
-      opacity:.32;
+      opacity:.30;
       filter: blur(.05px);
     }
 
     @keyframes floatHeartBalloon{
       0%{
         opacity: 0;
-        transform: translate(var(--x, 0px), var(--y0, 40px)) scale(var(--s, 1)) rotate(var(--r0, -10deg));
+        transform: translate(var(--x, 0px), var(--y0, 60px)) scale(var(--s, 1)) rotate(var(--r0, -8deg));
       }
-      10%{ opacity: .72; }
-      60%{ opacity: .48; }
+      12%{ opacity: .72; }
+      62%{ opacity: .46; }
       100%{
         opacity: 0;
-        transform: translate(calc(var(--x, 0px) + var(--drift, 40px)), var(--y1, -520px)) scale(calc(var(--s, 1) * 1.08)) rotate(var(--r1, 10deg));
+        transform: translate(calc(var(--x, 0px) + var(--drift, 60px)), var(--y1, -720px)) scale(calc(var(--s, 1) * 1.07)) rotate(var(--r1, 10deg));
       }
     }
 
@@ -176,6 +213,12 @@
       backdrop-filter: blur(10px);
       z-index:1;
       transform: translateZ(0);
+    }
+
+     .content{
+      position:relative;
+      z-index:3;
+      padding: 0 26px 0; /* space away from corners */
     }
 
     .manuscript::before{
@@ -207,9 +250,7 @@
       border:1px solid rgba(35,66,55,.14);
     }
 
-    /* =========================
-       Alice-ish mini card corners
-       ========================= */
+    /* corners */
     .pcorner{
       position:absolute;
       width:86px; height:86px;
@@ -251,7 +292,6 @@
       font-size:14px;
       line-height:1;
     }
-    .pcorner .rank .suit{ font-size:14px; }
     .pcorner .centerSuit{
       position:absolute;
       inset:0;
@@ -260,22 +300,20 @@
       font-size:28px;
       text-shadow: 0 1px 0 rgba(255,255,255,.6);
     }
+
     .p1{ top:10px; left:10px; --rot:-6deg; }
     .p2{ top:10px; right:10px; --rot:6deg; }
     .p3{ bottom:10px; left:10px; --rot:6deg; }
     .p4{ bottom:10px; right:10px; --rot:-6deg; }
 
-    /* =========================
-       Typography
-       ========================= */
+    .pcorner{ z-index:5; }
+
     .welcome{
       display:flex;
       align-items:center;
       justify-content:center;
       gap:12px;
       margin-bottom:16px;
-      position:relative;
-      z-index:3;
     }
     .welcome .line{
       height:1px;
@@ -307,8 +345,6 @@
       font-weight:600;
       margin:0;
       color: rgba(34,34,42,.92);
-      position:relative;
-      z-index:3;
       font-size: clamp(28px, 5.4vw, 38px);
     }
 
@@ -317,8 +353,6 @@
       width:72%;
       margin:18px auto;
       background:linear-gradient(90deg, transparent, rgba(200,163,90,.98), transparent);
-      position:relative;
-      z-index:3;
     }
 
     .label{
@@ -326,8 +360,6 @@
       margin-top:6px;
       font-size:18px;
       color: rgba(35,66,55,.84);
-      position:relative;
-      z-index:3;
     }
 
     .val{
@@ -339,8 +371,6 @@
       background-clip:text;
       color:transparent;
       margin:10px 0 6px;
-      position:relative;
-      z-index:3;
       text-shadow: 0 10px 30px rgba(200,163,90,.14);
     }
 
@@ -350,16 +380,12 @@
       color: rgba(34,34,42,.74);
       max-width: 46ch;
       line-height:1.4;
-      position:relative;
-      z-index:3;
     }
     .target strong{ color:rgba(200,163,90,.98); font-weight:600; }
 
     .field{
       margin-bottom:14px;
       text-align:left;
-      position:relative;
-      z-index:3;
     }
     label{
       font-size:12px;
@@ -387,9 +413,10 @@
       box-shadow: 0 0 0 4px rgba(61,107,85,.10), 0 16px 34px rgba(20,16,28,.10);
     }
 
-    button{
-      width:100%;
-      margin-top:12px;
+      button{
+      width:min(360px, 100%);
+      margin:14px auto 0;
+      display:block;
       padding:15px 16px;
       border:none;
       border-radius:999px;
@@ -431,16 +458,6 @@
       position:relative;
       overflow:hidden;
     }
-    .reveal::before{
-      content:"";
-      position:absolute;
-      inset:-2px;
-      pointer-events:none;
-      background:
-        radial-gradient(520px 300px at 22% 20%, rgba(61,107,85,.10), transparent 60%),
-        radial-gradient(520px 300px at 80% 26%, rgba(200,163,90,.12), transparent 62%);
-      opacity:.85;
-    }
     .reveal h2{
       font-family:"Parisienne", cursive;
       font-size:58px;
@@ -450,7 +467,6 @@
       z-index:1;
       text-shadow: 0 10px 30px rgba(200,163,90,.18);
     }
-    .reveal p, .reveal h1, .reveal button{ position:relative; z-index:1; }
 
     @media (max-width: 420px){
       .manuscript{ padding:48px 22px 38px; }
@@ -458,6 +474,7 @@
       .pcorner::after{ font-size:36px; }
       .pcorner .centerSuit{ font-size:26px; }
       .val{ font-size: clamp(64px, 12vw, 86px); }
+      .heartBalloon{ width:64px; height:64px; } /* still big on mobile */
     }
   </style>
 </head>
@@ -468,7 +485,7 @@
   <div class="manuscript">
     <div class="frame"></div>
 
-    <!-- Alice-ish mini playing-card corners -->
+    <!-- corners -->
     <div class="pcorner p1" style="--wm:'♥';">
       <div class="rank" style="color:var(--red)"><div>A</div><div class="suit">♥</div></div>
       <div class="centerSuit" style="color:var(--red)">♥</div>
@@ -486,33 +503,35 @@
       <div class="centerSuit" style="color:var(--black)">♣</div>
     </div>
 
-    <div class="welcome">
-      <span class="line"></span>
-      <div class="text"><strong>ISA Chulalongkorn</strong></div>
-      <span class="line"></span>
+    <div class="content">
+      <div class="welcome">
+        <span class="line"></span>
+        <div class="text"><strong>ISA Chulalongkorn</strong></div>
+        <span class="line"></span>
+      </div>
+
+      <h1>Heart to Heart</h1>
+      <div class="divider"></div>
+
+      <div class="label">Your Number</div>
+      <div class="val" id="my-num">--</div>
+
+      <div class="target">
+        Find a companion whose number brings yours to <strong id="target-num">110</strong>
+      </div>
+
+      <div class="field">
+        <label for="partner-val">Your Companion’s Number</label>
+        <input type="number" id="partner-val" placeholder="Enter number" />
+      </div>
+
+      <div class="field">
+        <label for="host-key">The Key</label>
+        <input type="password" id="host-key" placeholder="Enter key" autocomplete="off" />
+      </div>
+
+      <button type="button" onclick="attemptBond()">Join Heart</button>
     </div>
-
-    <h1>Heart to Heart</h1>
-    <div class="divider"></div>
-
-    <div class="label">Your Number</div>
-    <div class="val" id="my-num">--</div>
-
-    <div class="target">
-      Find a companion whose number brings yours to <strong id="target-num">110</strong>
-    </div>
-
-    <div class="field">
-      <label for="partner-val">Your Companion’s Number</label>
-      <input type="number" id="partner-val" placeholder="Enter number" />
-    </div>
-
-    <div class="field">
-      <label for="host-key">The Key</label>
-      <input type="password" id="host-key" placeholder="Enter key" autocomplete="off" />
-    </div>
-
-    <button type="button" onclick="attemptBond()">Join Heart</button>
   </div>
 
   <div id="overlay">
@@ -563,7 +582,7 @@
     }
 
     /* =========================
-       Heart Balloon engine
+       Heart Balloon engine (bigger + less frequent)
        ========================= */
     const heartBalloonsLayer = document.getElementById("heartBalloons");
     function rand(min, max){ return Math.random() * (max - min) + min; }
@@ -572,15 +591,22 @@
       const wrap = document.createElement("div");
       wrap.className = "heartBalloon";
 
-      const hb = document.createElement("div");
-      hb.className = "hb";
+      const hbWrap = document.createElement("div");
+      hbWrap.className = "hb";
+      const base = document.createElement("div");
+      base.className = "base";
+      hbWrap.appendChild(base);
+
+      const rim = document.createElement("div");
+      rim.className = "rim";
 
       const knot = document.createElement("div");
       knot.className = "knot";
       const string = document.createElement("div");
       string.className = "string";
 
-      wrap.appendChild(hb);
+      wrap.appendChild(hbWrap);
+      wrap.appendChild(rim);
       wrap.appendChild(knot);
       wrap.appendChild(string);
 
@@ -588,29 +614,30 @@
       const vh = window.innerHeight;
 
       const startX = rand(0.06, 0.94) * vw;
-      const startY = vh + rand(40, 120);
+      const startY = vh + rand(60, 140);
 
-      const drift = rand(-120, 120);
-      const dur = rand(5.8, 9.0);
-      const scale = rand(0.85, 1.95);
-      const r0 = rand(-12, -4);
-      const r1 = rand(6, 16);
+      const drift = rand(-140, 140);
+      const dur = rand(6.6, 10.2);
+      const scale = rand(0.85, 1.35);   
+      const r0 = rand(-10, -4);
+      const r1 = rand(6, 14);
 
       const colors = [
-        "rgba(243,223,179,.92)",  // gold cream
-        "rgba(244,217,227,.92)",  // blush
-        "rgba(219,233,255,.92)",  // sky
-        "rgba(223,240,232,.92)",  // sage
-        "rgba(200,163,90,.88)"    // deeper gold
+        "rgba(243,223,179,.92)",
+        "rgba(244,217,227,.92)",
+        "rgba(219,233,255,.92)",
+        "rgba(223,240,232,.92)",
+        "rgba(200,163,90,.88)"
       ];
-      hb.style.setProperty("--c", colors[Math.floor(Math.random()*colors.length)]);
+      const c = colors[Math.floor(Math.random()*colors.length)];
+      wrap.style.setProperty("--c", c);
 
       wrap.style.left = startX + "px";
       wrap.style.top  = startY + "px";
 
       wrap.style.setProperty("--x", "0px");
       wrap.style.setProperty("--y0", "0px");
-      wrap.style.setProperty("--y1", (-rand(360, 620)) + "px");
+      wrap.style.setProperty("--y1", (-rand(420, 760)) + "px");
       wrap.style.setProperty("--drift", drift + "px");
       wrap.style.setProperty("--dur", dur + "s");
       wrap.style.setProperty("--s", scale);
@@ -627,14 +654,14 @@
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
       if (heartBalloonTimer) return;
 
-      for(let i=0;i<7;i++){
-        setTimeout(spawnHeartBalloon, i * 180);
+      for(let i=0;i<6;i++){
+        setTimeout(spawnHeartBalloon, i * 220);
       }
 
       heartBalloonTimer = setInterval(() => {
         spawnHeartBalloon();
-        if (Math.random() < 0.32) spawnHeartBalloon();
-      }, 780);
+        if (Math.random() < 0.25) spawnHeartBalloon();
+      }, 980);
     }
 
     startHeartBalloons();
@@ -649,3 +676,5 @@
   </script>
 </body>
 </html>
+
+
