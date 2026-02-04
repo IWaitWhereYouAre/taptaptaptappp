@@ -3,227 +3,120 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-  <title>ISA Tap Together ❤️</title>
-
+  <title>ISA Pulse</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;600;800&display=swap');
-
-    :root{
-      --ink:#1b1b1f;
-      --muted:rgba(27,27,31,.70);
-      --paper:#fbf7ef;
-      --paper2:#f6efe2;
-      --gold:#c5a059;
-      --rose:#d85a7a;
-      --panel:rgba(255,255,255,.70);
-      --border:rgba(27,27,31,.12);
-      --shadow:0 18px 60px rgba(0,0,0,.16);
+    :root {
+      --bg: #000;
+      --primary: #d85a7a;
+      --gold: #c5a059;
+    }
+    body, html { 
+      margin: 0; padding: 0; height: 100%; 
+      background: var(--bg); color: white;
+      font-family: 'Inter', system-ui, sans-serif;
+      overflow: hidden; display: flex; justify-content: center; align-items: center;
+    }
+    #game-ui { text-align: center; transition: opacity 0.5s; }
+    
+    /* The Pulse Circle */
+    .pulse-container {
+      position: relative; width: 200px; height: 200px;
+      display: flex; justify-content: center; align-items: center;
+    }
+    .ring {
+      position: absolute; border: 2px solid var(--primary);
+      border-radius: 50%; opacity: 0.5;
     }
 
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      color:var(--ink);
-      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background:
-        radial-gradient(1200px 700px at 20% 6%, rgba(197,160,89,.22), transparent 55%),
-        radial-gradient(1000px 700px at 85% 72%, rgba(216,90,122,.14), transparent 60%),
-        linear-gradient(180deg, var(--paper), var(--paper2));
-      overflow:hidden;
+    /* Message Styles */
+    #welcome-screen {
+      position: fixed; inset: 0; display: none;
+      flex-direction: column; justify-content: center; align-items: center;
+      background: var(--gold); color: #1b1b1f; padding: 20px;
+      animation: flashIn 0.5s ease-out forwards;
+    }
+    h1 { font-size: 3rem; margin: 0; text-transform: uppercase; letter-spacing: -2px; }
+    p { font-size: 1.2rem; font-weight: bold; }
+
+    @keyframes flashIn {
+      from { opacity: 0; transform: scale(0.8); }
+      to { opacity: 1; transform: scale(1); }
     }
 
-    .wrap{height:100%; display:grid; place-items:center; padding:16px;}
-    .panel{
-      width:min(820px, 96vw);
-      background:var(--panel);
-      border:1px solid var(--border);
-      border-radius:26px;
-      padding:16px;
-      box-shadow:var(--shadow);
-      backdrop-filter: blur(10px);
-      display:grid;
-      gap:12px;
-      position:relative;
-      overflow:hidden;
-    }
-
-    .top{position:relative; display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;}
-    h1{ margin:0; font-family:"Playfair Display", serif; font-size:22px; font-weight:700; }
-    .sub{margin:6px 0 0; color:var(--muted); font-size:13px; line-height:1.45; max-width:70ch;}
-
-    .controls{display:flex; gap:10px; align-items:center;}
-    .btn{
-      appearance:none; border:1px solid rgba(27,27,31,.16);
-      background: rgba(255,255,255,.72); color:var(--ink);
-      padding:10px 12px; border-radius:14px; font-weight:800;
-      font-size:13px; cursor:pointer;
-    }
-    .btn.primary{
-      border-color: rgba(197,160,89,.55);
-      background: linear-gradient(180deg, rgba(197,160,89,.26), rgba(255,255,255,.78));
-    }
-
-    .stage{
-      position:relative; width:100%; min-height: 440px; border-radius:24px;
-      border:1px solid var(--border); background: rgba(255,255,255,.48);
-      display:grid; place-items:center; overflow:hidden; touch-action: manipulation;
-    }
-
-    .pill{
-      position:absolute; top:14px; left:14px; right:14px;
-      display:flex; justify-content:space-between; pointer-events:none;
-      font-size:12px; color:var(--muted); z-index:10;
-    }
-    .pill > div{ background: rgba(255,255,255,.72); border:1px solid var(--border); padding:8px 10px; border-radius:999px; }
-
-    .heartWrap{ position:relative; display:grid; place-items:center; width:min(360px, 65vw); aspect-ratio:1/1; }
-    .heart{ font-size: clamp(110px, 15vw, 200px); transition: transform 200ms cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-
-    /* The Glow Effect */
-    .glow .heart {
-      filter: drop-shadow(0 0 30px rgba(216,90,122,0.8));
-      animation: heartbeat 0.6s infinite;
-    }
-
-    @keyframes heartbeat {
-      0% { transform: scale(var(--base, 1)); }
-      50% { transform: scale(calc(var(--base, 1) * 1.15)); }
-      100% { transform: scale(var(--base, 1)); }
-    }
-
-    .msg{
-      position:absolute; bottom:80px; left:0; right:0; text-align:center;
-      opacity:0; transition: all 0.3s ease; pointer-events:none;
-    }
-    .msg.show{ opacity:1; transform: translateY(-10px); }
-    #msgTitle{ font-weight:900; font-size:1.2rem; color: var(--rose); }
-
-    .tapBtn{ position:absolute; bottom:20px; width:100%; display:flex; justify-content:center; }
-    .tapBtn button{
-      border:none; background: var(--ink); color: white;
-      padding:16px 40px; border-radius:100px; font-weight:800;
-      font-size:18px; cursor:pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-    }
+    #timer { font-family: monospace; font-size: 14px; color: var(--primary); margin-top: 20px; }
   </style>
 </head>
 <body>
 
-  <div class="wrap">
-    <div class="panel">
-      <div class="top">
-        <div>
-          <h1>ISA Together</h1>
-          <div class="sub">Tap 10 times when the heart glows to unlock the welcome.</div>
-        </div>
-        <div class="controls">
-          <button class="btn primary" onclick="location.reload()">Sync/Reset</button>
-        </div>
-      </div>
-
-      <div class="stage" id="stage">
-        <div class="pill">
-          <div>Build: <b id="buildText">0</b>/10</div>
-          <div id="statusText">Waiting for rhythm...</div>
-        </div>
-
-        <div class="heartWrap">
-          <div class="heart" id="heart">❤️</div>
-        </div>
-
-        <div class="msg" id="msg">
-          <div id="msgTitle">TAP NOW!</div>
-          <div id="msgSub">Together!</div>
-        </div>
-
-        <div class="tapBtn">
-          <button id="tapBtn">TAP HEART ❤️</button>
-        </div>
-      </div>
+  <div id="game-ui">
+    <p>Tap when the rings meet the center</p>
+    <div class="pulse-container" id="pulse-area">
+      <div class="ring" id="ring1"></div>
+      <div id="core">❤️</div>
     </div>
+    <div id="timer">Syncing...</div>
+  </div>
+
+  <div id="welcome-screen">
+    <h1>BOOM ✨</h1>
+    <p>ISA warmly welcome you guys!</p>
+    <div style="font-size: 5rem;">👋😊</div>
   </div>
 
 <script>
-  const heart = document.getElementById('heart');
-  const buildText = document.getElementById('buildText');
-  const statusText = document.getElementById('statusText');
-  const msg = document.getElementById('msg');
-  const msgTitle = document.getElementById('msgTitle');
-  const tapBtn = document.getElementById('tapBtn');
-  const stage = document.getElementById('stage');
+  const welcome = document.getElementById('welcome-screen');
+  const gameUI = document.getElementById('game-ui');
+  const timerDisplay = document.getElementById('timer');
+  const ring1 = document.getElementById('ring1');
+  const core = document.getElementById('core');
 
-  let build = 0;
-  const MAX_BUILD = 10;
-  let canTap = false;
-  let hasTappedThisCycle = false;
+  // --- GLOBAL SYNC LOGIC ---
+  // The game ends at the next "even" 2-minute mark (e.g. 2:02, 2:04, 2:06)
+  const ROUND_DURATION = 120000; // 2 Minutes
+  let endTime = Math.ceil(Date.now() / ROUND_DURATION) * ROUND_DURATION;
+  
+  const PULSE_SPEED = 2000; // One pulse every 2 seconds
 
-  // Sync settings: Heart glows every 3 seconds
-  const CYCLE_MS = 3000; 
-  const GLOW_DURATION = 1000; 
-
-  function updateLoop() {
+  function loop() {
     const now = Date.now();
-    const cyclePos = now % CYCLE_MS;
+    const timeLeft = endTime - now;
+    const pulseProgress = (now % PULSE_SPEED) / PULSE_SPEED;
 
-    if (cyclePos < GLOW_DURATION) {
-      if (!canTap) {
-        canTap = true;
-        hasTappedThisCycle = false;
-        stage.classList.add('glow');
-        showFeedback("NOW!", "Tap together!");
-      }
-    } else {
-      if (canTap) {
-        canTap = false;
-        stage.classList.remove('glow');
-      }
+    // 1. Synchronized Animation
+    // Rings shrink from 200px to 40px globally
+    const size = 200 - (pulseProgress * 160);
+    const opacity = pulseProgress;
+    ring1.style.width = ring1.style.height = size + 'px';
+    ring1.style.opacity = opacity;
+    core.style.transform = `scale(${1.2 - (pulseProgress * 0.4)})`;
+
+    // 2. Synchronized Timer
+    if (timeLeft <= 0) {
+      showBoom();
+      return;
     }
-    requestAnimationFrame(updateLoop);
+    
+    const seconds = Math.floor(timeLeft / 1000);
+    timerDisplay.innerText = `ISA CONNECTION IN: ${seconds}s`;
+
+    requestAnimationFrame(loop);
   }
 
-  function showFeedback(title, sub) {
-    msgTitle.innerText = title;
-    msg.classList.add('show');
-    setTimeout(() => msg.classList.remove('show'), 800);
+  function showBoom() {
+    gameUI.style.display = 'none';
+    welcome.style.display = 'flex';
+    // Vibration for haptic "Boom"
+    if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
   }
 
-  function handleTap() {
-    if (build >= MAX_BUILD) return;
+  // Visual feedback for tapping
+  document.body.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    core.style.color = '#fff';
+    setTimeout(() => core.style.color = '', 100);
+  });
 
-    if (canTap && !hasTappedThisCycle) {
-      build++;
-      hasTappedThisCycle = true;
-      buildText.innerText = build;
-      
-      // Scale heart
-      const scale = 1 + (build * 0.1);
-      stage.style.setProperty('--base', scale);
-      heart.style.transform = `scale(${scale})`;
-
-      if (build >= MAX_BUILD) {
-        finish();
-      } else {
-        showFeedback("NICE!", "Keep going...");
-      }
-    } else if (!canTap) {
-      showFeedback("WAIT!", "Watch the glow.");
-    }
-  }
-
-  function finish() {
-    msgTitle.innerText = "BOOM ✨";
-    msgTitle.style.color = "#c5a059";
-    document.getElementById('msgSub').innerText = "ISA warmly welcome you guys";
-    msg.classList.add('show');
-    heart.innerText = "✨";
-    heart.style.transform = "scale(2.5)";
-    statusText.innerText = "Welcome!";
-  }
-
-  tapBtn.addEventListener('click', handleTap);
-  // Start the global sync loop
-  updateLoop();
+  loop();
 </script>
-
 </body>
 </html>
