@@ -3,115 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Royal Alchemy</title>
+    <title>Secret Garden Bond</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Playfair+Display:ital,wght@0,400;1,700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,400&family=Great+Vibes&display=swap');
 
         :root {
-            --burgundy: #630d16;
-            --gold: #d4af37;
-            --cream: #fffaf0;
+            --sage: #b8c1ad;
+            --rose: #eac8ca;
+            --cream: #fdfaf6;
+            --gold-text: #a68b5b;
         }
 
         body {
             margin: 0;
-            font-family: 'Playfair Display', serif;
-            background: var(--burgundy);
-            background-image: radial-gradient(circle, #80131d 0%, #4d0a11 100%);
-            color: var(--cream);
+            font-family: 'Cormorant Garamond', serif;
+            /* Secret Garden Pastel Gradient */
+            background: linear-gradient(135deg, #fdfaf6 0%, #eac8ca 50%, #b8c1ad 100%);
+            color: #5d5d5d;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             height: 100vh;
             text-align: center;
-            overflow: hidden;
         }
 
-        .frame {
-            border: 3px double var(--gold);
-            padding: 40px 20px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
-            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+        .garden-box {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            padding: 40px 25px;
+            border-radius: 50% 50% 0 0; /* Elegant Arch Shape */
+            border: 2px solid white;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
             max-width: 85%;
-            position: relative;
+            border-top: 5px solid var(--rose);
         }
 
-        h1 { font-family: 'Cinzel', serif; color: var(--gold); font-size: 1.5rem; letter-spacing: 2px; margin-bottom: 5px; }
-        .heart-icon { font-size: 50px; color: var(--gold); margin-bottom: 10px; animation: pulse 2s infinite; }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); text-shadow: 0 0 0px var(--gold); }
-            50% { transform: scale(1.1); text-shadow: 0 0 20px var(--gold); }
-            100% { transform: scale(1); }
+        h1 { font-family: 'Great Vibes', cursive; color: var(--gold-text); font-size: 2.8rem; margin: 0; }
+        .sub-title { font-style: italic; letter-spacing: 1px; margin-bottom: 20px; color: #888; }
+
+        .essence-circle {
+            width: 100px; height: 100px; border-radius: 50%;
+            background: white; border: 1px solid var(--rose);
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 20px; box-shadow: 0 5px 15px rgba(234, 200, 202, 0.4);
         }
 
-        .essence-label { font-style: italic; font-size: 1.1rem; opacity: 0.9; }
-        .val { font-size: 4rem; font-weight: bold; color: var(--gold); margin: 5px 0; font-family: 'Cinzel', serif; }
-        
-        .instruction { font-size: 0.9rem; margin: 15px 0; line-height: 1.4; border-top: 1px solid var(--gold); border-bottom: 1px solid var(--gold); padding: 10px 0; }
+        .val { font-size: 3rem; font-weight: bold; color: var(--rose); }
+
+        .instruction { font-size: 1.1rem; margin-bottom: 20px; color: #666; padding: 0 10px; }
 
         input { 
-            background: transparent; border: 1px solid var(--gold); color: var(--cream);
-            padding: 10px; border-radius: 5px; width: 80px; text-align: center; font-size: 1.2rem;
-            margin: 5px;
+            background: white; border: 1px solid #ddd; color: #555;
+            padding: 10px; border-radius: 20px; width: 80px; text-align: center; 
+            font-size: 1rem; margin: 5px; outline: none;
         }
+
+        input:focus { border-color: var(--rose); }
 
         button {
-            background: var(--gold); color: var(--burgundy); border: none; padding: 12px 25px;
-            font-weight: bold; border-radius: 5px; cursor: pointer; font-family: 'Cinzel', serif;
-            margin-top: 15px; transition: 0.3s;
+            background: var(--rose); color: white; border: none; padding: 12px 30px;
+            font-size: 1rem; border-radius: 25px; cursor: pointer;
+            margin-top: 15px; font-family: 'Cormorant Garamond', serif; font-weight: bold;
+            transition: all 0.3s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
 
-        button:hover { transform: scale(1.05); background: #f1c40f; }
+        button:hover { background: #dbb3b5; transform: translateY(-2px); }
 
         #success-msg {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--burgundy); border: 10px inset var(--gold);
-            display: none; flex-direction: column; align-items: center; justify-content: center;
-            z-index: 100; box-sizing: border-box;
+            background: #fffcfc; display: none; flex-direction: column; 
+            align-items: center; justify-content: center; z-index: 100;
         }
+
+        .flower-icon { color: var(--rose); font-size: 1.5rem; margin: 10px; }
     </style>
 </head>
 <body>
 
-    <div id="game" class="frame">
-        <h1>Royal Alchemy</h1>
-        <div class="heart-icon">❦</div>
-        <div class="essence-label">Your Noble Essence</div>
-        <div class="val" id="my-num">--</div>
+    <div id="game" class="garden-box">
+        <h1>Secret Garden</h1>
+        <div class="sub-title">Heart to Heart</div>
+        
+        <div class="essence-circle">
+            <div class="val" id="my-num">--</div>
+        </div>
         
         <div class="instruction">
-            Find the soul whose essence <br> combined with yours equals <br> 
-            <strong id="target-num" style="color:var(--gold); font-size: 1.4rem;">100</strong>
+            Your soul blooms at this frequency. <br>
+            Find the one to reach a harmony of <br>
+            <strong id="target-num" style="color:var(--gold-text);">100</strong>
         </div>
 
         <div>
             <input type="number" id="partner-val" placeholder="Their #">
-            <input type="password" id="host-key" placeholder="Passcode" style="width: 100px;">
+            <input type="password" id="host-key" placeholder="Key" style="width: 60px;">
             <br>
-            <button onclick="attemptBond()">Commence Bonding</button>
+            <button onclick="attemptBond()">Bloom Together</button>
         </div>
-        <p style="font-size: 0.7rem; opacity: 0.5; margin-top: 15px;">Refresh to reset your destiny</p>
+        <div class="flower-icon">🌸 ❦ 🌸</div>
     </div>
 
     <div id="success-msg">
-        <h1 style="font-size: 2.5rem;">❦ A Perfect Match ❦</h1>
-        <p style="font-size: 1.2rem; font-style: italic;">The stars have aligned for</p>
-        <h2 id="team-name" style="color: var(--gold); font-family: 'Cinzel', serif; font-size: 2rem;">The Duke & Duchess</h2>
-        <p>Present this seal to the Master of Ceremonies.</p>
-        <button onclick="location.reload()" style="background: var(--cream);">New Destiny</button>
+        <h1 style="font-size: 3.5rem;">Bloomed!</h1>
+        <p style="font-style: italic; font-size: 1.3rem;">You have discovered</p>
+        <h2 id="team-name" style="color: var(--rose); font-size: 2.2rem; margin: 10px 0;">The Eternal Lilies</h2>
+        <p>A gift awaits you at the garden gate.</p>
+        <button onclick="location.reload()" style="background: var(--sage);">Return to Garden</button>
     </div>
 
     <script>
-        // --- CONFIGURATION ---
-        const SECRET_PASSCODE = "123"; // Give this to people ONLY when they find their match!
+        const SECRET_KEY = "love"; // The secret word players must ask you for
         const targets = [100, 110];
-        const teamNames = ["The Golden Roses", "The Burgundy Barons", "The Silk Souls", "The Velvet Hearts", "The Grand Royals"];
+        const teamNames = ["The Wild Peonies", "The Sweet Jasmine", "The Hidden Ivy", "The Moonlit Moss", "The Sunlit Ferns"];
 
-        // Generate local state
-        const myValue = Math.floor(Math.random() * 60) + 20;
+        const myValue = Math.floor(Math.random() * 50) + 25;
         const myTarget = targets[Math.floor(Math.random() * targets.length)];
 
         document.getElementById('my-num').innerText = myValue;
@@ -119,20 +125,19 @@
 
         function attemptBond() {
             const partnerVal = parseInt(document.getElementById('partner-val').value);
-            const userPass = document.getElementById('host-key').value;
+            const userKey = document.getElementById('host-key').value.toLowerCase();
             const sum = myValue + partnerVal;
 
             if (sum === myTarget) {
-                if (userPass === SECRET_PASSCODE) {
+                if (userKey === SECRET_KEY) {
                     const randomTeam = teamNames[Math.floor(Math.random() * teamNames.length)];
                     document.getElementById('team-name').innerText = randomTeam;
                     document.getElementById('success-msg').style.display = 'flex';
-                    if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
                 } else {
-                    alert("The math is divine! Now, seek the Master of Ceremonies for the 'Royal Passcode' to seal your bond.");
+                    alert("The harmony is correct! Find the Gardener to receive the 'Secret Key' and let your hearts bloom.");
                 }
             } else {
-                alert("Alas, your essences do not align. Seek another.");
+                alert("The petals don't quite match. Seek another flower in the garden.");
             }
         }
     </script>
