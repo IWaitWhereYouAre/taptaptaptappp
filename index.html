@@ -3,121 +3,181 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secret Garden Bond</title>
+    <title>The Royal Covenant</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,400&family=Great+Vibes&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Cinzel:wght@400;700&family=Cormorant+Garamond:ital,wght@1,300&display=swap');
 
         :root {
-            --sage: #b8c1ad;
-            --rose: #eac8ca;
-            --cream: #fdfaf6;
-            --gold-text: #a68b5b;
+            --midnight: #0a0e14;
+            --cathedral-blue: #16222e;
+            --gold: #c5a059;
+            --gold-bright: #f3cf8a;
+            --ivory: #f4f1ea;
         }
 
         body {
             margin: 0;
-            font-family: 'Cormorant Garamond', serif;
-            /* Secret Garden Pastel Gradient */
-            background: linear-gradient(135deg, #fdfaf6 0%, #eac8ca 50%, #b8c1ad 100%);
-            color: #5d5d5d;
+            padding: 0;
+            background-color: var(--midnight);
+            /* Creating a "Vignette" effect to mimic a dark cathedral hall */
+            background: radial-gradient(circle, var(--cathedral-blue) 0%, var(--midnight) 100%);
+            color: var(--ivory);
+            font-family: 'Cinzel', serif;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
             height: 100vh;
+            overflow: hidden;
+        }
+
+        .manuscript {
+            position: relative;
+            padding: 60px 40px;
+            width: 85%;
+            max-width: 450px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--gold);
             text-align: center;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
         }
 
-        .garden-box {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(10px);
-            padding: 40px 25px;
-            border-radius: 50% 50% 0 0; /* Elegant Arch Shape */
-            border: 2px solid white;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
-            max-width: 85%;
-            border-top: 5px solid var(--rose);
+        /* The "Wow" Factor: Intricate Gold Corners */
+        .manuscript::before, .manuscript::after {
+            content: '✧';
+            position: absolute;
+            color: var(--gold);
+            font-size: 1.5rem;
+        }
+        .manuscript::before { top: 10px; left: 10px; }
+        .manuscript::after { bottom: 10px; right: 10px; }
+
+        h1 {
+            font-family: 'Cinzel Decorative', cursive;
+            font-size: 1.8rem;
+            letter-spacing: 5px;
+            color: var(--gold);
+            margin: 0 0 10px 0;
+            text-transform: uppercase;
         }
 
-        h1 { font-family: 'Great Vibes', cursive; color: var(--gold-text); font-size: 2.8rem; margin: 0; }
-        .sub-title { font-style: italic; letter-spacing: 1px; margin-bottom: 20px; color: #888; }
-
-        .essence-circle {
-            width: 100px; height: 100px; border-radius: 50%;
-            background: white; border: 1px solid var(--rose);
-            display: flex; align-items: center; justify-content: center;
-            margin: 0 auto 20px; box-shadow: 0 5px 15px rgba(234, 200, 202, 0.4);
+        .divider {
+            width: 60%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            margin: 20px auto;
         }
 
-        .val { font-size: 3rem; font-weight: bold; color: var(--rose); }
-
-        .instruction { font-size: 1.1rem; margin-bottom: 20px; color: #666; padding: 0 10px; }
-
-        input { 
-            background: white; border: 1px solid #ddd; color: #555;
-            padding: 10px; border-radius: 20px; width: 80px; text-align: center; 
-            font-size: 1rem; margin: 5px; outline: none;
+        .essence-label {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 1.2rem;
+            color: var(--gold-bright);
+            opacity: 0.8;
         }
 
-        input:focus { border-color: var(--rose); }
+        .val {
+            font-size: 6rem;
+            font-weight: 700;
+            margin: 10px 0;
+            line-height: 1;
+            /* Glowing Gold Text */
+            color: var(--gold-bright);
+            text-shadow: 0 0 20px rgba(197, 160, 89, 0.5);
+        }
+
+        .target-area {
+            font-size: 1rem;
+            letter-spacing: 2px;
+            margin-bottom: 40px;
+        }
+
+        .input-chamber {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+        }
+
+        input {
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--gold);
+            color: var(--ivory);
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
+            padding: 5px;
+            width: 140px;
+            text-align: center;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus {
+            border-bottom: 1px solid var(--ivory);
+            width: 160px;
+        }
 
         button {
-            background: var(--rose); color: white; border: none; padding: 12px 30px;
-            font-size: 1rem; border-radius: 25px; cursor: pointer;
-            margin-top: 15px; font-family: 'Cormorant Garamond', serif; font-weight: bold;
-            transition: all 0.3s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            background: transparent;
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            padding: 15px 40px;
+            font-family: 'Cinzel', serif;
+            letter-spacing: 3px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.5s;
+            text-transform: uppercase;
         }
 
-        button:hover { background: #dbb3b5; transform: translateY(-2px); }
+        button:hover {
+            background: var(--gold);
+            color: var(--midnight);
+            box-shadow: 0 0 20px var(--gold);
+        }
 
-        #success-msg {
+        #overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #fffcfc; display: none; flex-direction: column; 
+            background: var(--midnight); display: none; flex-direction: column;
             align-items: center; justify-content: center; z-index: 100;
         }
-
-        .flower-icon { color: var(--rose); font-size: 1.5rem; margin: 10px; }
     </style>
 </head>
 <body>
 
-    <div id="game" class="garden-box">
-        <h1>Secret Garden</h1>
-        <div class="sub-title">Heart to Heart</div>
+    <div class="manuscript">
+        <h1>The Covenant</h1>
+        <div class="divider"></div>
         
-        <div class="essence-circle">
-            <div class="val" id="my-num">--</div>
-        </div>
+        <div class="essence-label">Sacred Identity</div>
+        <div class="val" id="my-num">--</div>
         
-        <div class="instruction">
-            Your soul blooms at this frequency. <br>
-            Find the one to reach a harmony of <br>
-            <strong id="target-num" style="color:var(--gold-text);">100</strong>
+        <div class="target-area">
+            SEEK THE SUM OF <strong id="target-num" style="color:var(--gold-bright)">100</strong>
         </div>
 
-        <div>
-            <input type="number" id="partner-val" placeholder="Their #">
-            <input type="password" id="host-key" placeholder="Key" style="width: 60px;">
-            <br>
-            <button onclick="attemptBond()">Bloom Together</button>
+        <div class="input-chamber">
+            <input type="number" id="partner-val" placeholder="COUNTERPART">
+            <input type="password" id="host-key" placeholder="THE SEAL">
+            <button onclick="attemptBond()">Commence Rite</button>
         </div>
-        <div class="flower-icon">🌸 ❦ 🌸</div>
     </div>
 
-    <div id="success-msg">
-        <h1 style="font-size: 3.5rem;">Bloomed!</h1>
-        <p style="font-style: italic; font-size: 1.3rem;">You have discovered</p>
-        <h2 id="team-name" style="color: var(--rose); font-size: 2.2rem; margin: 10px 0;">The Eternal Lilies</h2>
-        <p>A gift awaits you at the garden gate.</p>
-        <button onclick="location.reload()" style="background: var(--sage);">Return to Garden</button>
+    <div id="overlay">
+        <h1 style="font-size: 3rem; color: var(--gold);">BLOOMED</h1>
+        <div class="divider"></div>
+        <p style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1.5rem;">Behold your destiny as</p>
+        <h2 id="team-name" style="font-size: 2.5rem; color: var(--gold-bright);">The Golden Sovereigns</h2>
+        <button onclick="location.reload()" style="margin-top: 50px;">Return to Hall</button>
     </div>
 
     <script>
-        const SECRET_KEY = "love"; // The secret word players must ask you for
-        const targets = [100, 110];
-        const teamNames = ["The Wild Peonies", "The Sweet Jasmine", "The Hidden Ivy", "The Moonlit Moss", "The Sunlit Ferns"];
+        const SECRET_KEY = "sovereign"; // The "Cathedral" passcode
+        const targets = [100, 110, 120];
+        const teamNames = ["The Ivory Spires", "The Gilded Pillars", "The Midnight Arch", "The Marble Saints", "The Royal Crest"];
 
-        const myValue = Math.floor(Math.random() * 50) + 25;
+        const myValue = Math.floor(Math.random() * 60) + 20;
         const myTarget = targets[Math.floor(Math.random() * targets.length)];
 
         document.getElementById('my-num').innerText = myValue;
@@ -128,16 +188,14 @@
             const userKey = document.getElementById('host-key').value.toLowerCase();
             const sum = myValue + partnerVal;
 
-            if (sum === myTarget) {
-                if (userKey === SECRET_KEY) {
-                    const randomTeam = teamNames[Math.floor(Math.random() * teamNames.length)];
-                    document.getElementById('team-name').innerText = randomTeam;
-                    document.getElementById('success-msg').style.display = 'flex';
-                } else {
-                    alert("The harmony is correct! Find the Gardener to receive the 'Secret Key' and let your hearts bloom.");
-                }
+            if (sum === myTarget && userKey === SECRET_KEY) {
+                const randomTeam = teamNames[Math.floor(Math.random() * teamNames.length)];
+                document.getElementById('team-name').innerText = randomTeam;
+                document.getElementById('overlay').style.display = 'flex';
+            } else if (sum === myTarget && userKey !== SECRET_KEY) {
+                alert("The Covenant is mathematically sound. You now require the Master's Seal (Passcode).");
             } else {
-                alert("The petals don't quite match. Seek another flower in the garden.");
+                alert("The harmony is incomplete. Continue your search.");
             }
         }
     </script>
